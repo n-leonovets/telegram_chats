@@ -1,7 +1,7 @@
 import asyncio
 import sys
 
-from src_base.database import async_engine, Base
+from src.database import async_engine, Base
 
 
 async def init_models() -> None:
