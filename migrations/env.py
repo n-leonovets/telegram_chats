@@ -17,11 +17,10 @@ async def main():
 
 if __name__ == "__main__":
     if sys.platform in ('win32', 'cygwin', 'cli'):
+        # Windows
         asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-        # from winloop import install
-        # install()
     else:
-        # if we're on apple or linux do this instead
+        # Linux & MacOS
         from uvloop import install
         install()
 

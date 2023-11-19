@@ -1,5 +1,4 @@
 from typing import Optional, Generic, TypeVar
-from dataclasses import dataclass
 
 from pydantic import BaseModel
 

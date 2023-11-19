@@ -24,3 +24,8 @@ class ChatModel(BaseModel):
     model_config = SettingsConfigDict(
         from_attributes=True
     )
+
+
+class UpdateChat(ChatModel):
+
+    model_config = SettingsConfigDict()

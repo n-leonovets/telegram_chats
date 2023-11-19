@@ -3,11 +3,11 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from src_base.api.dependencies import chat_service
-from src_base.schemas.chat import ChatModel
-from src_base.services.chat import ChatService
-from src_base.utils.api_response import ApiResponse, ApiError
-from src_base.utils.query import ChatFilter, LimitFilter
+from src.api.dependencies import chat_service
+from src.schemas.chat import ChatModel
+from src.services.chat import ChatService
+from src.utils.api_response import ApiResponse, ApiError
+from src.utils.query import ChatFilter, LimitFilter
 
 router = APIRouter(
     prefix="/chats",

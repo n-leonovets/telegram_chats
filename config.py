@@ -30,7 +30,7 @@ settings = Settings()
 
 logging.basicConfig(
     level=logging.INFO,
-    filename="src_base/logs/main.log",
+    filename="src/logs/main.log",
     encoding="utf-8",
     format="%(asctime)s [%(levelname)s] %(message)s"
 )

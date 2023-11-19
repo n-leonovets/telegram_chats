@@ -1,7 +1,7 @@
 from sqlalchemy import func, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src_base.database import Base, str64
+from src.database import Base, str64
 
 
 class ChatCategoryTable(Base):

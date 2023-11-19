@@ -7,7 +7,7 @@ from fastapi import Query
 from pydantic.json_schema import SkipJsonSchema
 from sqlalchemy import Select, or_
 
-from src_base.models.chat import ChatTable
+from src.models.chat import ChatTable
 
 
 @dataclass

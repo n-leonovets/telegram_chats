@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 
 from sqlalchemy import Insert, Select
 
-from src_base.database import async_session_maker
-from src_base.utils.query import AbstractFilter
+from src.database import async_session_maker
+from src.utils.query import AbstractFilter
 
 
 class AbstractRepository(ABC):

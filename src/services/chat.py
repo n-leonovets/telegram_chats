@@ -1,7 +1,7 @@
-from src_base.models.chat import ChatTable
-from src_base.schemas.chat import ChatModel
-from src_base.utils.query import ChatFilter, LimitFilter
-from src_base.utils.repository import AbstractRepository
+from src.models.chat import ChatTable
+from src.schemas.chat import ChatModel
+from src.utils.query import ChatFilter, LimitFilter
+from src.utils.repository import AbstractRepository
 
 
 class ChatService:

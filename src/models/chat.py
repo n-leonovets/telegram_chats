@@ -4,7 +4,7 @@ from typing import Annotated
 from sqlalchemy import func
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src_base.database import Base, str32, str255
+from src.database import Base, str32, str255
 
 
 updated_at = Annotated[datetime.datetime, mapped_column(

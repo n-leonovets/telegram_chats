@@ -5,7 +5,7 @@ import sys
 from fastapi import FastAPI
 
 from config import settings
-from src_base.api.chat import router as chat_router
+from src.api.chat import router as chat_router
 
 
 _logger = logging.getLogger(__name__)
