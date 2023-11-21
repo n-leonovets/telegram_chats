@@ -1,17 +1,19 @@
 from src.models.chat import ChatTable
 from src.schemas.chat import ChatModel
 from src.utils.query import ChatFilter, LimitFilter
-from src.utils.repository import AbstractRepository
+from src.utils.unitofwork import AbstractUnitOfWork
 
 
 class ChatService:
-    def __init__(self, chat_repo: AbstractRepository):
-        self.chat_repo: AbstractRepository = chat_repo
+    @staticmethod
+    async def add_chat(uow: AbstractUnitOfWork, chat: ChatModel) -> ChatModel:
+        async with uow:
+            chat: ChatTable = await uow.chat.add_one(values=chat.model_dump())
+            await uow.commit()
+            return ChatModel(**chat.__dict__)
 
-    async def add_chat(self, chat: ChatModel) -> ChatModel:
-        chat: ChatTable = await self.chat_repo.add_one(values=chat.model_dump())
-        return ChatModel(**chat.__dict__)
-
-    async def get_chats(self, filters: ChatFilter, limits: LimitFilter) -> list[ChatModel]:
-        chats: list[ChatTable] = await self.chat_repo.get_all(filters=filters, limits=limits)
-        return [ChatModel(**chat.__dict__) for chat in chats]
+    @staticmethod
+    async def get_chats(uow: AbstractUnitOfWork, filters: ChatFilter, limits: LimitFilter) -> list[ChatModel]:
+        async with uow:
+            chats: list[ChatTable] = await uow.chat.get_all(filters=filters, limits=limits)
+            return [ChatModel(**chat.__dict__) for chat in chats]

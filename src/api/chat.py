@@ -3,7 +3,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends
 
-from src.api.dependencies import chat_service
+from src.api.dependencies import UOWDep
 from src.schemas.chat import ChatModel
 from src.services.chat import ChatService
 from src.utils.api_response import ApiResponse, ApiError
@@ -20,10 +20,10 @@ _logger = logging.getLogger(__name__)
 async def get_chats(
     filters: Annotated[ChatFilter, Depends()],
     limits: Annotated[LimitFilter, Depends()],
-    chat_serivece: Annotated[ChatService, Depends(chat_service)]
+    uow: UOWDep
 ) -> ApiResponse[list[ChatModel]]:
     try:
-        chats = await chat_serivece.get_chats(filters=filters, limits=limits)
+        chats = await ChatService().get_chats(uow=uow, filters=filters, limits=limits)
         return ApiResponse(
             status_code=200,
             data=chats
@@ -43,10 +43,10 @@ async def get_chats(
 @router.post("/")
 async def add_chat(
     chat: ChatModel,
-    chat_serivece: Annotated[ChatService, Depends(chat_service)]
+    uow: UOWDep
 ) -> ApiResponse[ChatModel]:
     try:
-        chat = chat_serivece.add_chat(chat)
+        chat = await ChatService().add_chat(uow=uow, chat=chat)
         return ApiResponse(
             status_code=200,
             data=chat
