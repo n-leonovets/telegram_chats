@@ -1,6 +1,8 @@
-from src.repositories.chat import ChatRepository
-from src.services.chat import ChatService
+from typing import Annotated
+
+from fastapi import Depends
+
+from src.utils.unitofwork import AbstractUnitOfWork, UnitOfWork
 
 
-def chat_service():
-    return ChatService(ChatRepository())
+UOWDep = Annotated[AbstractUnitOfWork, Depends(UnitOfWork)]
