@@ -96,7 +96,7 @@ async def update_chat(
     uow: UOWDep
 ) -> ApiResponse[ChatModel]:
     try:
-        result = await ChatService().update_chat(uow=uow, chat=chat, filters={"id": chat_id})
+        result = await ChatService().update_chat(uow=uow, chat=chat, filter_by={"id": chat_id})
         return ApiResponse(
             status_code=status.HTTP_200_OK,
             data=result
@@ -120,7 +120,7 @@ async def delete_chat(
     uow: UOWDep
 ) -> ApiResponse[ChatModel]:
     try:
-        result = await ChatService().delete_chat(uow=uow, filters={"id": chat_id})
+        result = await ChatService().delete_chat(uow=uow, filter_by={"id": chat_id})
         return ApiResponse(
             status_code=status.HTTP_200_OK,
             data=result

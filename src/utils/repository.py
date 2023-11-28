@@ -66,12 +66,12 @@ class SQLAlchemyRepository(AbstractRepository):
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def update_one(self, values: dict, filters: dict):
-        stmt = Update(self.model).values(**values).filter_by(**filters).returning(self.model)
+    async def update_one(self, values: dict, filter_by: dict):
+        stmt = Update(self.model).values(**values).filter_by(**filter_by).returning(self.model)
         result = await self.session.execute(stmt)
         return result.scalar_one()
 
-    async def delete_one(self, filters: dict):
-        stmt = Delete(self.model).filter_by(**filters).returning(self.model)
+    async def delete_one(self, filter_by: dict):
+        stmt = Delete(self.model).filter_by(**filter_by).returning(self.model)
         result = await self.session.execute(stmt)
         return result.scalar_one()
