@@ -32,8 +32,10 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def get_all(self, filters: AbstractFilter, limits: AbstractFilter):
         query = Select(self.model)
-        filters.apply(query)
-        limits.apply(query)
+        query = filters.apply(query)
+        query = limits.apply(query)
+        print(f"filters:\n {filters}")
+        print(f"query:\n {query}")
         result = await self.session.execute(query)
         return result.scalars().all()
 

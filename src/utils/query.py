@@ -13,7 +13,7 @@ from src.models.chat import ChatTable
 @dataclass
 class AbstractFilter(ABC):
     @abstractmethod
-    def apply(self, query: Any) -> None:
+    def apply(self, query: Any) -> Select:
         pass
 
 
@@ -22,11 +22,13 @@ class LimitFilter(AbstractFilter):
     limit: int | None = None
     offset: int | None = None
 
-    def apply(self, query: Select) -> None:
+    def apply(self, query: Select) -> Select:
         if self.limit:
             query = query.limit(self.limit)
         if self.offset:
             query = query.offset(self.offset)
+
+        return query
 
 
 @dataclass
@@ -48,7 +50,7 @@ class ChatFilter(AbstractFilter):
     updated_after: datetime.datetime | SkipJsonSchema[None] = None
     updated_to: datetime.datetime | SkipJsonSchema[None] = None
 
-    def apply(self, query: Select) -> None:
+    def apply(self, query: Select) -> Select:
         if self.chat_id is not None:
             query = query.where(ChatTable.id == self.chat_id)
         if self.username is not None:
@@ -92,3 +94,5 @@ class ChatFilter(AbstractFilter):
             query = query.where(ChatTable.updated_at > self.updated_after)
         if self.updated_to is not None:
             query = query.where(ChatTable.updated_at < self.updated_to)
+
+        return query
