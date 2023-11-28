@@ -2,6 +2,7 @@ import asyncio
 import sys
 
 from src.database import async_engine, Base
+from src.models import chat, chat_category
 
 
 async def init_models() -> None:
@@ -25,3 +26,5 @@ if __name__ == "__main__":
         install()
 
     asyncio.run(main())
+    # python -m migrations.env
+

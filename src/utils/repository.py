@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from sqlalchemy import Insert, Select
+from sqlalchemy import Insert, Select, Update, Delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.utils.query import AbstractFilter
@@ -9,19 +9,26 @@ from src.utils.query import AbstractFilter
 
 class AbstractRepository(ABC):
     @abstractmethod
-    async def get_all(self, filters: Optional[AbstractFilter] = None, limits: Optional[AbstractFilter] = None):
+    async def create_all(self, values: list[dict]):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_one(self, filters: Optional[AbstractFilter] = None, limits: Optional[AbstractFilter] = None):
+    async def create_one(self, values: dict):
         raise NotImplementedError
 
     @abstractmethod
-    async def add_all(self, values: list[dict]):
+    async def read_all(self, filters: Optional[AbstractFilter] = None, limits: Optional[AbstractFilter] = None):
         raise NotImplementedError
 
     @abstractmethod
-    async def add_one(self, values: dict):
+    async def read_one(self, filters: Optional[AbstractFilter] = None, limits: Optional[AbstractFilter] = None):
+        raise NotImplementedError
+
+    @abstractmethod
+    async def update_one(self, values: dict, filters: AbstractFilter):
+        raise NotImplementedError
+
+    async def delete_one(self, filters: AbstractFilter):
         raise NotImplementedError
 
 
@@ -31,16 +38,17 @@ class SQLAlchemyRepository(AbstractRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_all(self, filters: Optional[AbstractFilter] = None, limits: Optional[AbstractFilter] = None):
-        query = Select(self.model)
-        if filters:
-            query = filters.apply(query)
-        if limits:
-            query = limits.apply(query)
-        result = await self.session.execute(query)
+    async def create_one(self, values: dict):
+        stmt = Insert(self.model).values(**values).returning(self.model)
+        result = await self.session.execute(stmt)
+        return result.scalar_one()
+
+    async def create_all(self, values: list[dict]):
+        stmt = Insert(self.model).values(values).returning(self.model)
+        result = await self.session.execute(stmt)
         return result.scalars().all()
 
-    async def get_one(self, filters: Optional[AbstractFilter] = None, limits: Optional[AbstractFilter] = None):
+    async def read_one(self, filters: Optional[AbstractFilter] = None, limits: Optional[AbstractFilter] = None):
         query = Select(self.model)
         if filters:
             query = filters.apply(query)
@@ -49,12 +57,21 @@ class SQLAlchemyRepository(AbstractRepository):
         result = await self.session.execute(query)
         return result.scalar_one()
 
-    async def add_all(self, values: list[dict]):
-        stmt = Insert(self.model).values(values).returning(self.model)
-        result = await self.session.execute(stmt)
+    async def read_all(self, filters: Optional[AbstractFilter] = None, limits: Optional[AbstractFilter] = None):
+        query = Select(self.model)
+        if filters:
+            query = filters.apply(query)
+        if limits:
+            query = limits.apply(query)
+        result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def add_one(self, values: dict):
-        stmt = Insert(self.model).values(**values).returning(self.model)
+    async def update_one(self, values: dict, filters: dict):
+        stmt = Update(self.model).values(**values).filter_by(**filters).returning(self.model)
+        result = await self.session.execute(stmt)
+        return result.scalar_one()
+
+    async def delete_one(self, filters: dict):
+        stmt = Delete(self.model).filter_by(**filters).returning(self.model)
         result = await self.session.execute(stmt)
         return result.scalar_one()

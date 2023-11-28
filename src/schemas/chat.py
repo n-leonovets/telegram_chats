@@ -47,11 +47,10 @@ class ChatAddModel(BaseModel):
 
 
 class ChatUpdateModel(BaseModel):
-    id: int
     username: Optional[str] = None
     invite_link: Optional[str] = None
     members_count: Optional[int] = None
-    title: Annotated[str, StringConstraints(max_length=255)] = None
+    title: Optional[Annotated[str, StringConstraints(max_length=255)]] = None
     description: Optional[Annotated[str, StringConstraints(max_length=255)]] = None
     is_verified: Optional[bool] = None
     is_restricted: Optional[bool] = None
