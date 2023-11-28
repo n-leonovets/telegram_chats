@@ -46,6 +46,21 @@ class ChatAddModel(BaseModel):
     )
 
 
-class UpdateChat(ChatModel):
+class ChatUpdateModel(BaseModel):
+    id: int
+    username: Optional[str] = None
+    invite_link: Optional[str] = None
+    members_count: Optional[int] = None
+    title: Annotated[str, StringConstraints(max_length=255)] = None
+    description: Optional[Annotated[str, StringConstraints(max_length=255)]] = None
+    is_verified: Optional[bool] = None
+    is_restricted: Optional[bool] = None
+    is_scam: Optional[bool] = None
+    is_fake: Optional[bool] = None
+    is_forum: Optional[bool] = None
+    is_moderated: Optional[bool] = None
+    is_closed: Optional[bool] = None
 
-    model_config = SettingsConfigDict()
+    model_config = SettingsConfigDict(
+        from_attributes=True
+    )
