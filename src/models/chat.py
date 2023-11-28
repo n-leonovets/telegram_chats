@@ -1,9 +1,12 @@
 import datetime
 from typing import Annotated
 
+from sqlalchemy import func
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base, str32, str255, boolFalse, updated_at
+from src.database import Base, str32, str255, updated_at
+
+boolFalse = Annotated[bool, mapped_column(server_default="false")]
 
 
 class ChatTable(Base):

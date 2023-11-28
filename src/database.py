@@ -44,7 +44,6 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
 str32 = Annotated[str, 32]
 str64 = Annotated[str, 64]
 str255 = Annotated[str, 255]
-boolFalse = Annotated[bool, mapped_column(server_default="false")]
 updated_at = Annotated[datetime.datetime, mapped_column(
         server_default=func.current_timestamp(),
         onupdate=func.current_timestamp()
