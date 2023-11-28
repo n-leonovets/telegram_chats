@@ -3,7 +3,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from src.database import Base, str32, str255, boolFalse, updated_at
 
 
-class ChatTable(Base):
+class ChatModel(Base):
     __tablename__ = "chat"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)

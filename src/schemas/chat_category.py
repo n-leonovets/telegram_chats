@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from pydantic_settings import SettingsConfigDict
 
 
-class ChatCategoryModel(BaseModel):
+class ChatCategorySchema(BaseModel):
     chat_id: int
     category: str
 

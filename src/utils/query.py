@@ -7,7 +7,7 @@ from fastapi import Query
 from pydantic.json_schema import SkipJsonSchema
 from sqlalchemy import Select, Update, Delete, or_
 
-from src.models.chat import ChatTable
+from src.models.chat import ChatModel
 
 
 @dataclass
@@ -52,47 +52,47 @@ class ChatFilter(AbstractFilter):
 
     def apply(self, query: Select) -> Select:
         if self.chat_id is not None:
-            query = query.where(ChatTable.id == self.chat_id)
+            query = query.where(ChatModel.id == self.chat_id)
         if self.username is not None:
-            query = query.where(ChatTable.username == self.username)
+            query = query.where(ChatModel.username == self.username)
         if self.invite_link is not None:
-            query = query.where(ChatTable.invite_link == self.invite_link)
+            query = query.where(ChatModel.invite_link == self.invite_link)
 
         if self.members_count_more is not None:
-            query = query.where(ChatTable.members_count > self.members_count_more)
+            query = query.where(ChatModel.members_count > self.members_count_more)
         if self.members_count_less is not None:
-            query = query.where(ChatTable.members_count < self.members_count_less)
+            query = query.where(ChatModel.members_count < self.members_count_less)
 
         if self.keywords_in_title:
             title_conditions = [
-                ChatTable.title.ilike(f"%{search_string}%") for search_string in self.keywords_in_title
+                ChatModel.title.ilike(f"%{search_string}%") for search_string in self.keywords_in_title
             ]
             query = query.where(or_(*title_conditions))
 
         if self.keywords_in_description:
             description_conditions = [
-                ChatTable.title.ilike(f"%{search_string}%") for search_string in self.keywords_in_description
+                ChatModel.title.ilike(f"%{search_string}%") for search_string in self.keywords_in_description
             ]
             query = query.where(or_(*description_conditions))
 
         if self.is_verified is not None:
-            query = query.where(ChatTable.is_verified == self.is_verified)
+            query = query.where(ChatModel.is_verified == self.is_verified)
         if self.is_restricted is not None:
-            query = query.where(ChatTable.is_restricted == self.is_restricted)
+            query = query.where(ChatModel.is_restricted == self.is_restricted)
         if self.is_scam is not None:
-            query = query.where(ChatTable.is_scam == self.is_scam)
+            query = query.where(ChatModel.is_scam == self.is_scam)
         if self.is_fake is not None:
-            query = query.where(ChatTable.is_fake == self.is_fake)
+            query = query.where(ChatModel.is_fake == self.is_fake)
         if self.is_forum is not None:
-            query = query.where(ChatTable.is_forum == self.is_forum)
+            query = query.where(ChatModel.is_forum == self.is_forum)
         if self.is_moderated is not None:
-            query = query.where(ChatTable.is_moderated == self.is_moderated)
+            query = query.where(ChatModel.is_moderated == self.is_moderated)
         if self.is_closed is not None:
-            query = query.where(ChatTable.is_closed == self.is_closed)
+            query = query.where(ChatModel.is_closed == self.is_closed)
 
         if self.updated_after is not None:
-            query = query.where(ChatTable.updated_at > self.updated_after)
+            query = query.where(ChatModel.updated_at > self.updated_after)
         if self.updated_to is not None:
-            query = query.where(ChatTable.updated_at < self.updated_to)
+            query = query.where(ChatModel.updated_at < self.updated_to)
 
         return query

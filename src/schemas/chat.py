@@ -5,7 +5,7 @@ from pydantic import BaseModel, StringConstraints
 from pydantic_settings import SettingsConfigDict
 
 
-class ChatModel(BaseModel):
+class ChatSchema(BaseModel):
     id: int
     username: Optional[str] = None
     invite_link: Optional[str] = None
@@ -26,7 +26,7 @@ class ChatModel(BaseModel):
     )
 
 
-class ChatAddModel(BaseModel):
+class ChatAddSchema(BaseModel):
     id: int
     username: Optional[str] = None
     invite_link: Optional[str] = None
@@ -46,7 +46,7 @@ class ChatAddModel(BaseModel):
     )
 
 
-class ChatUpdateModel(BaseModel):
+class ChatUpdateSchema(BaseModel):
     username: Optional[str] = None
     invite_link: Optional[str] = None
     members_count: Optional[int] = None

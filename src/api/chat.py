@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.api.dependencies import UOWDep
-from src.schemas.chat import ChatModel, ChatAddModel, ChatUpdateModel
+from src.schemas.chat import ChatSchema, ChatAddSchema, ChatUpdateSchema
 from src.services.chat import ChatService
 from src.utils.api_response import ApiResponse, ApiErrorDetail
 from src.utils.query import ChatFilter, LimitFilter
@@ -18,9 +18,9 @@ _logger = logging.getLogger(__name__)
 
 @router.post("/chat/")
 async def add_chat(
-    chat: ChatAddModel,
+    chat: ChatAddSchema,
     uow: UOWDep
-) -> ApiResponse[ChatModel]:
+) -> ApiResponse[ChatSchema]:
     try:
         result = await ChatService().add_chat(uow=uow, chat=chat)
         return ApiResponse(
@@ -42,9 +42,9 @@ async def add_chat(
 
 @router.post("/")
 async def add_chats(
-    chats: list[ChatAddModel],
+    chats: list[ChatAddSchema],
     uow: UOWDep
-) -> ApiResponse[list[ChatModel]]:
+) -> ApiResponse[list[ChatSchema]]:
     try:
         result = await ChatService().add_chats(uow=uow, chats=chats)
         return ApiResponse(
@@ -69,7 +69,7 @@ async def get_chats(
     filters: Annotated[ChatFilter, Depends()],
     limits: Annotated[LimitFilter, Depends()],
     uow: UOWDep
-) -> ApiResponse[list[ChatModel]]:
+) -> ApiResponse[list[ChatSchema]]:
     try:
         result = await ChatService().get_chats(uow=uow, filters=filters, limits=limits)
         return ApiResponse(
@@ -92,9 +92,9 @@ async def get_chats(
 @router.patch("/{chat_id}")
 async def update_chat(
     chat_id: int,
-    chat: Annotated[ChatUpdateModel, Depends()],
+    chat: Annotated[ChatUpdateSchema, Depends()],
     uow: UOWDep
-) -> ApiResponse[ChatModel]:
+) -> ApiResponse[ChatSchema]:
     try:
         result = await ChatService().update_chat(uow=uow, chat=chat, filter_by={"id": chat_id})
         return ApiResponse(
@@ -118,7 +118,7 @@ async def update_chat(
 async def delete_chat(
     chat_id: int,
     uow: UOWDep
-) -> ApiResponse[ChatModel]:
+) -> ApiResponse[ChatSchema]:
     try:
         result = await ChatService().delete_chat(uow=uow, filter_by={"id": chat_id})
         return ApiResponse(
