@@ -30,8 +30,8 @@ class SQLAlchemyRepository(AbstractRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def add_all(self, values: list[dict]):
-        stmt = Insert(self.model).values(**values).returning(self.model)
+    async def add_all(self, values: list):
+        stmt = Insert(self.model).values(values).returning(self.model)
         result = await self.session.execute(stmt)
         return result.scalars().all()
 

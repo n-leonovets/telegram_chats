@@ -6,7 +6,7 @@ from pydantic import BaseModel
 T = TypeVar("T")
 
 
-class ApiError(BaseModel):
+class ApiErrorDetail(BaseModel):
     """
     Стардартизированный ответ ошибок API.
 
@@ -36,9 +36,9 @@ class ApiResponse(BaseModel, Generic[T]):
             data (Any | None) = None:
                 Выходные данные.
 
-            details (ApiError | None) = None:
+            detail (str | None) = None:
                 Детали ошибок.
     """
     status_code: int
     data: Optional[T] = None
-    details: Optional[ApiError] = None
+    detail: Optional[str] = None
