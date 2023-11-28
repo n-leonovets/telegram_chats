@@ -9,7 +9,7 @@ class ChatModel(BaseModel):
     id: int
     username: Optional[str] = None
     invite_link: Optional[str] = None
-    members_count: Optional[int] = 0
+    members_count: int
     title: Annotated[str, StringConstraints(max_length=255)]
     description: Optional[Annotated[str, StringConstraints(max_length=255)]] = None
     is_verified: bool
@@ -19,14 +19,14 @@ class ChatModel(BaseModel):
     is_forum: bool
     is_moderated: bool
     is_closed: bool
-    updated_at: Optional[datetime.datetime] = datetime.datetime.now()
+    updated_at: datetime.datetime
 
     model_config = SettingsConfigDict(
         from_attributes=True
     )
 
 
-class AddChatModel(BaseModel):
+class ChatAddModel(BaseModel):
     id: int
     username: Optional[str] = None
     invite_link: Optional[str] = None

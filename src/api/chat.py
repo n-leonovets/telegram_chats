@@ -4,7 +4,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.api.dependencies import UOWDep
-from src.schemas.chat import ChatModel, AddChatModel
+from src.schemas.chat import ChatModel, ChatAddModel
 from src.services.chat import ChatService
 from src.utils.api_response import ApiResponse, ApiErrorDetail
 from src.utils.query import ChatFilter, LimitFilter
@@ -43,7 +43,7 @@ async def get_chats(
 
 @router.post("/")
 async def add_chats(
-    chats: list[AddChatModel],
+    chats: list[ChatAddModel],
     uow: UOWDep
 ) -> ApiResponse[list[ChatModel]]:
     try:
@@ -67,7 +67,7 @@ async def add_chats(
 
 @router.post("/chat/")
 async def add_chat(
-    chat: AddChatModel,
+    chat: ChatAddModel,
     uow: UOWDep
 ) -> ApiResponse[ChatModel]:
     try:
