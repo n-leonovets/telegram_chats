@@ -30,23 +30,25 @@ class SQLAlchemyRepository(AbstractRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_all(self, filters: AbstractFilter, limits: AbstractFilter):
+    async def get_all(self, filters: AbstractFilter = None, limits: AbstractFilter = None):
         query = Select(self.model)
-        query = filters.apply(query)
-        query = limits.apply(query)
-        print(f"filters:\n {filters}")
-        print(f"query:\n {query}")
+        if filters:
+            query = filters.apply(query)
+        if limits:
+            query = limits.apply(query)
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def get_one(self, filters: AbstractFilter, limits: AbstractFilter):
+    async def get_one(self, filters: AbstractFilter = None, limits: AbstractFilter = None):
         query = Select(self.model)
-        filters.apply(query)
-        limits.apply(query)
+        if filters:
+            query = filters.apply(query)
+        if limits:
+            query = limits.apply(query)
         result = await self.session.execute(query)
         return result.scalar_one()
 
-    async def add_all(self, values: list):
+    async def add_all(self, values: list[dict]):
         stmt = Insert(self.model).values(values).returning(self.model)
         result = await self.session.execute(stmt)
         return result.scalars().all()
