@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from sqlalchemy import Insert, Select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,11 +9,11 @@ from src.utils.query import AbstractFilter
 
 class AbstractRepository(ABC):
     @abstractmethod
-    async def get_all(self, filters: AbstractFilter, limits: AbstractFilter):
+    async def get_all(self, filters: Optional[AbstractFilter] = None, limits: Optional[AbstractFilter] = None):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_one(self, filters: AbstractFilter, limits: AbstractFilter):
+    async def get_one(self, filters: Optional[AbstractFilter] = None, limits: Optional[AbstractFilter] = None):
         raise NotImplementedError
 
     @abstractmethod
@@ -30,7 +31,7 @@ class SQLAlchemyRepository(AbstractRepository):
     def __init__(self, session: AsyncSession):
         self.session = session
 
-    async def get_all(self, filters: AbstractFilter = None, limits: AbstractFilter = None):
+    async def get_all(self, filters: Optional[AbstractFilter] = None, limits: Optional[AbstractFilter] = None):
         query = Select(self.model)
         if filters:
             query = filters.apply(query)
@@ -39,7 +40,7 @@ class SQLAlchemyRepository(AbstractRepository):
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def get_one(self, filters: AbstractFilter = None, limits: AbstractFilter = None):
+    async def get_one(self, filters: Optional[AbstractFilter] = None, limits: Optional[AbstractFilter] = None):
         query = Select(self.model)
         if filters:
             query = filters.apply(query)
