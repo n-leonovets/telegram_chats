@@ -6,11 +6,10 @@ from src.utils.unitofwork import AbstractUnitOfWork
 
 class ChatService:
     @staticmethod
-    async def add_chat(uow: AbstractUnitOfWork, chat: ChatModel) -> ChatModel:
+    async def get_chats(uow: AbstractUnitOfWork, filters: ChatFilter, limits: LimitFilter) -> list[ChatModel]:
         async with uow:
-            result: ChatTable = await uow.chat.add_one(values=chat.model_dump())
-            await uow.commit()
-            return ChatModel(**result.__dict__)
+            result: list[ChatTable] = await uow.chat.get_all(filters=filters, limits=limits)
+            return [ChatModel(**chat.__dict__) for chat in result]
 
     @staticmethod
     async def add_chats(uow: AbstractUnitOfWork, chats: list[ChatModel]) -> ChatModel:
@@ -20,7 +19,8 @@ class ChatService:
             return ChatModel(**result.__dict__)
 
     @staticmethod
-    async def get_chats(uow: AbstractUnitOfWork, filters: ChatFilter, limits: LimitFilter) -> list[ChatModel]:
+    async def add_chat(uow: AbstractUnitOfWork, chat: ChatModel) -> ChatModel:
         async with uow:
-            result: list[ChatTable] = await uow.chat.get_all(filters=filters, limits=limits)
-            return [ChatModel(**chat.__dict__) for chat in result]
+            result: ChatTable = await uow.chat.add_one(values=chat.model_dump())
+            await uow.commit()
+            return ChatModel(**result.__dict__)
