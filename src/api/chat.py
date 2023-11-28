@@ -1,5 +1,5 @@
 import logging
-from typing import Annotated, Union
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
@@ -25,7 +25,7 @@ async def get_chats(
     try:
         result = await ChatService().get_chats(uow=uow, filters=filters, limits=limits)
         return ApiResponse(
-            status_code=200,
+            status_code=status.HTTP_200_OK,
             data=result
         )
     except Exception as e:
@@ -49,7 +49,7 @@ async def add_chats(
     try:
         result = await ChatService().add_chats(uow=uow, chats=chats)
         return ApiResponse(
-            status_code=status.HTTP_200_OK,
+            status_code=status.HTTP_201_CREATED,
             data=result
         )
     except Exception as e:
@@ -73,7 +73,7 @@ async def add_chat(
     try:
         result = await ChatService().add_chat(uow=uow, chat=chat)
         return ApiResponse(
-            status_code=status.HTTP_200_OK,
+            status_code=status.HTTP_201_CREATED,
             data=result
         )
     except Exception as e:
