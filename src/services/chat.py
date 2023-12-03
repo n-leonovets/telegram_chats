@@ -1,6 +1,7 @@
 from src.models.chat import ChatModel
 from src.schemas.chat import ChatSchema, ChatAddSchema, ChatUpdateSchema
-from src.utils.query import ChatFilter, LimitFilter
+from src.services.filters.base import LimitFilter
+from src.services.filters.chat import ChatFilter
 from src.utils.unitofwork import AbstractUnitOfWork
 
 

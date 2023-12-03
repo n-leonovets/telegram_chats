@@ -4,7 +4,7 @@ from typing import Optional
 from sqlalchemy import Insert, Select, Update, Delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.utils.query import AbstractFilter
+from src.utils.filters import AbstractFilter
 
 
 class AbstractRepository(ABC):

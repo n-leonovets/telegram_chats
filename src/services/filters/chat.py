@@ -1,34 +1,13 @@
 import datetime
 from dataclasses import dataclass
-from abc import abstractmethod, ABC
-from typing import Annotated, Any, Union
+from typing import Annotated
 
 from fastapi import Query
 from pydantic.json_schema import SkipJsonSchema
-from sqlalchemy import Select, Update, Delete, or_
+from sqlalchemy import Select, or_
 
 from src.models.chat import ChatModel
-
-
-@dataclass
-class AbstractFilter(ABC):
-    @abstractmethod
-    def apply(self, query: Any) -> Union[Select, Update, Delete]:
-        pass
-
-
-@dataclass
-class LimitFilter(AbstractFilter):
-    limit: int | None = None
-    offset: int | None = None
-
-    def apply(self, query: Select) -> Select:
-        if self.limit:
-            query = query.limit(self.limit)
-        if self.offset:
-            query = query.offset(self.offset)
-
-        return query
+from src.utils.filters import AbstractFilter
 
 
 @dataclass

@@ -2,7 +2,7 @@ import asyncio
 import sys
 
 from src.database import async_engine, Base
-from src.models import chat, chat_category
+from src.models import chat, chat_category, user
 
 
 async def init_models() -> None:

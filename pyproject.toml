@@ -12,6 +12,9 @@ fastapi = {extras = ["all"], version = "^0.104.1"}
 sqlalchemy = "^2.0.23"
 pydantic-settings = "^2.1.0"
 greenlet = "^3.0.1"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-multipart = "^0.0.6"
+python-jose = "^3.3.0"
 
 
 [build-system]

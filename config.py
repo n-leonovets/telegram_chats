@@ -11,6 +11,9 @@ class Settings(BaseSettings):
     APP_NAME: str = "Telegram Chats"
     DEBUG: bool = False
 
+    AUTH_SECRET_KEY: str
+    AUTH_ALGORITHM: str
+
     DB_USER: str
     DB_PASSWORD: str
     DB_HOST: str
