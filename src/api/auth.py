@@ -7,7 +7,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 
 from src.api.dependencies import UOWDep
-from src.schemas.auth import AuthTokens, Token
+from src.schemas.auth import AuthTokens, Token, TokenType
 from src.schemas.user import UserIDBSchema
 from src.services.auth import AuthService
 from src.services.filters.user import UserFilter
@@ -42,7 +42,7 @@ async def required_auth(
         )
         username: str = payload.get("username")
         token_type: str = payload.get("type")
-        if username is None or not token_type == "access":
+        if username is None or not token_type == TokenType.ACCESS:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
@@ -71,16 +71,18 @@ async def login_for_access_token(
 
     access_token = AuthService().create_access_token(username=form.username)
     refresh_token = AuthService().create_refresh_token(username=form.username)
-    
+
     return ApiResponse(
         status_code=status.HTTP_200_OK,
         data=AuthTokens(
             access_token=Token(
                 token=access_token,
+                type=TokenType.ACCESS,
                 token_type="bearer"
             ),
             refresh_token=Token(
                 token=refresh_token,
+                type=TokenType.REFRESH,
                 token_type="bearer"
             )
         )
@@ -123,10 +125,12 @@ async def get_new_token(
         data=AuthTokens(
             access_token=Token(
                 token=access_token,
+                type=TokenType.ACCESS,
                 token_type="bearer"
             ),
             refresh_token=Token(
                 token=refresh_token,
+                type=TokenType.REFRESH,
                 token_type="bearer"
             )
         )

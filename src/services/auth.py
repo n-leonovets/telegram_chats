@@ -4,6 +4,7 @@ from jose import jwt
 from passlib.context import CryptContext
 
 from config import settings
+from src.schemas.auth import TokenType
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -14,7 +15,7 @@ class AuthService:
         access_token = jwt.encode(
             claims={
                 "username": username,
-                "type": "access",
+                "type": TokenType.ACCESS,
                 "exp": datetime.utcnow() + timedelta(minutes=duration_minutes)
             },
             key=settings.AUTH_SECRET_KEY,
@@ -27,7 +28,7 @@ class AuthService:
         refresh_token = jwt.encode(
             claims={
                 "username": username,
-                "type": "refresh",
+                "type": TokenType.REFRESH,
                 "exp": datetime.utcnow() + timedelta(days=duration_days)
             },
             key=settings.AUTH_SECRET_KEY,
