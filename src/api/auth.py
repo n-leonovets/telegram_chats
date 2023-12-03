@@ -2,8 +2,8 @@ import logging
 
 from typing import Annotated
 
-from fastapi import Depends, APIRouter, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi import Depends, APIRouter, HTTPException, status, Form
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, OAuth2AuthorizationCodeBearer
 from jose import JWTError, jwt
 
 from src.api.dependencies import UOWDep
@@ -92,7 +92,7 @@ async def login_for_access_token(
 @router.post("/refresh_token")
 async def get_new_token(
     uow: UOWDep,
-    refresh_token: str = Depends(oauth2_scheme)
+    refresh_token: str = Annotated[OAuth2AuthorizationCodeBearer, Depends(oauth2_scheme)]
 ) -> ApiResponse[AuthTokens]:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
