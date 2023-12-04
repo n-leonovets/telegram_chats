@@ -1,3 +1,5 @@
+from typing import Optional
+
 from src.models.category import CategoryModel
 from src.schemas.category import CategoryOutSchema, CategoryInSchema
 from src.services.filters.base import LimitFilter
@@ -14,7 +16,11 @@ class CategoryService:
             return CategoryOutSchema(**result.__dict__)
 
     @staticmethod
-    async def get_categories(uow: AbstractUnitOfWork, filters: CategoryFilter, limits: LimitFilter):
+    async def get_categories(
+        uow: AbstractUnitOfWork,
+        filters: Optional[CategoryFilter] = None,
+        limits: Optional[LimitFilter] = None
+    ):
         async with uow:
             result: list[CategoryModel] = await uow.category.read_all(filters=filters, limits=limits)
             return [CategoryOutSchema(**category.__dict__) for category in result]

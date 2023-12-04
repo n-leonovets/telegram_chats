@@ -1,3 +1,5 @@
+from typing import Optional
+
 from src.models.chat import ChatModel
 from src.schemas.chat import ChatSchema, ChatAddSchema, ChatUpdateSchema
 from src.services.filters.base import LimitFilter
@@ -21,7 +23,11 @@ class ChatService:
             return [ChatSchema(**chat.__dict__) for chat in result]
 
     @staticmethod
-    async def get_chats(uow: AbstractUnitOfWork, filters: ChatFilter, limits: LimitFilter) -> list[ChatSchema]:
+    async def get_chats(
+        uow: AbstractUnitOfWork,
+        filters: Optional[ChatFilter] = None,
+        limits: Optional[LimitFilter] = None
+    ) -> list[ChatSchema]:
         async with uow:
             result: list[ChatModel] = await uow.chat.read_all(filters=filters, limits=limits)
             return [ChatSchema(**chat.__dict__) for chat in result]
