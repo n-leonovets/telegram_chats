@@ -22,7 +22,7 @@ _logger = logging.getLogger(__name__)
 @router.post("/chat/")
 async def add_chat(
     uow: UOWDep,
-    chat: ChatAdd,
+    chat: ChatAdd = Depends(),
     user_auth: UserPublic = Depends(required_auth)
 ) -> ChatResponse:
     try:
@@ -91,7 +91,7 @@ async def update_chat(
     user_auth: UserPublic = Depends(required_auth)
 ) -> ChatResponse:
     try:
-        return await ChatService().update_chat(uow=uow, chat=chat, filter_by={"id": chat_id})
+        return await ChatService().update_chat(uow=uow, chat=chat, filters=ChatFilter(chat_id=chat_id))
     except Exception as e:
         _logger.error("Exception error", exc_info=True)
         detail = ApiErrorDetail(
@@ -112,7 +112,7 @@ async def delete_chat(
     user_auth: UserPublic = Depends(required_auth)
 ) -> ChatResponse:
     try:
-        return await ChatService().delete_chat(uow=uow, filter_by={"id": chat_id})
+        return await ChatService().delete_chat(uow=uow, filters=ChatFilter(chat_id=chat_id))
     except Exception as e:
         _logger.error("Exception error", exc_info=True)
         detail = ApiErrorDetail(
