@@ -5,7 +5,6 @@ from typing import Annotated
 from fastapi import Depends, APIRouter, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
-from starlette.responses import JSONResponse
 
 from src.api.dependencies import UOWDep
 from src.schemas.auth import AuthTokens, TokenType
@@ -43,16 +42,15 @@ async def required_auth(
         )
         username: str = payload.get("username")
         token_type: str = payload.get("type")
-        if username is None and token_type == TokenType.ACCESS:
+        if username is None or not token_type == TokenType.ACCESS:
             raise credentials_exception
     except JWTError:
         _logger.error("JWTError", exc_info=True)
         raise credentials_exception
 
     user = await UserService().get_user(uow=uow, filters=UserFilter(username=username))
-    if user is None or user.is_disabled:
+    if not user or user.is_disabled:
         raise credentials_exception
-
     return user
 
 
@@ -71,12 +69,9 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    access_token = AuthService().create_access_token(username=form.username)
-    refresh_token = AuthService().create_refresh_token(username=form.username)
-
     return AuthTokens(
-        access_token=access_token,
-        refresh_token=refresh_token
+        access_token=AuthService().create_access_token(username=form.username),
+        refresh_token=AuthService().create_refresh_token(username=form.username)
     )
 
 
@@ -108,10 +103,23 @@ async def get_new_token(
     if user is None or user.is_disabled:
         raise credentials_exception
 
-    access_token = AuthService().create_access_token(username=username)
-    refresh_token = AuthService().create_refresh_token(username=username)
-
     return AuthTokens(
-        access_token=access_token,
-        refresh_token=refresh_token
+        access_token=AuthService().create_access_token(username=username),
+        refresh_token=AuthService().create_refresh_token(username=username)
     )
+
+
+@router.post("/register_user")
+async def register_user(
+    uow: UOWDep,
+    user: UserIDBSchema = Depends(),
+    user_auth: UserIDBSchema = Depends(required_auth)
+) -> UserIDBSchema:
+    if not user_auth.is_admin:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You do not have permission to access this resource",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return await UserService().add_user(uow=uow, user=user)
+
