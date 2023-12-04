@@ -5,8 +5,9 @@ import sys
 from fastapi import FastAPI
 
 from config import settings
-from src.api.chat import router as chat_router
 from src.api.auth import router as auth_router
+from src.api.category import router as category_router
+from src.api.chat import router as chat_router
 
 
 _logger = logging.getLogger(__name__)
@@ -17,8 +18,9 @@ app = FastAPI(
     debug=settings.DEBUG
 )
 
-app.include_router(chat_router)
 app.include_router(auth_router)
+app.include_router(category_router)
+app.include_router(chat_router)
 
 origins = [
     "http://localhost:8000",
