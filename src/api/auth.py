@@ -122,4 +122,3 @@ async def register_user(
             headers={"WWW-Authenticate": "Bearer"},
         )
     return await UserService().add_user(uow=uow, user=user)
-
