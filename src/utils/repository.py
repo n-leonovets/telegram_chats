@@ -21,7 +21,7 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def read_one(self, filters: Optional[AbstractFilter] = None):
+    async def read_one(self, filters: AbstractFilter):
         raise NotImplementedError
 
     @abstractmethod
@@ -48,10 +48,9 @@ class SQLAlchemyRepository(AbstractRepository):
         result = await self.session.execute(stmt)
         return result.scalars().all()
 
-    async def read_one(self, filters: Optional[AbstractFilter] = None):
+    async def read_one(self, filters: AbstractFilter):
         query = Select(self.model)
-        if filters:
-            query = filters.apply(query)
+        query = filters.apply(query)
         result = await self.session.execute(query)
         return result.scalar_one()
 
@@ -64,16 +63,14 @@ class SQLAlchemyRepository(AbstractRepository):
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def update_one(self, values: dict, filters: Optional[AbstractFilter] = None):
+    async def update_one(self, values: dict, filters: AbstractFilter):
         stmt = Update(self.model).values(**values).returning(self.model)
-        if filters:
-            stmt = stmt.filter_by(**filters.__dict__)
+        stmt = filters.apply(stmt)
         result = await self.session.execute(stmt)
         return result.scalar_one()
 
-    async def delete_one(self, filters: Optional[AbstractFilter] = None):
+    async def delete_one(self, filters: AbstractFilter):
         stmt = Delete(self.model).returning(self.model)
-        if filters:
-            stmt = stmt.filter_by(**filters.__dict__)
+        stmt = filters.apply(stmt)
         result = await self.session.execute(stmt)
         return result.scalar_one()
