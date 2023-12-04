@@ -27,18 +27,18 @@ class ChatService:
             return [ChatSchema(**chat.__dict__) for chat in result]
 
     @staticmethod
-    async def update_chat(uow: AbstractUnitOfWork, chat: ChatUpdateSchema, filter_by: dict) -> ChatSchema:
+    async def update_chat(uow: AbstractUnitOfWork, chat: ChatUpdateSchema, filters: ChatFilter) -> ChatSchema:
         async with uow:
             result: ChatModel = await uow.chat.update_one(
                 values=chat.model_dump(exclude_none=True),
-                filter_by=filter_by
+                filters=filters
             )
             await uow.commit()
             return ChatSchema(**result.__dict__)
 
     @staticmethod
-    async def delete_chat(uow: AbstractUnitOfWork, filter_by: dict) -> ChatSchema:
+    async def delete_chat(uow: AbstractUnitOfWork, filters: ChatFilter) -> ChatSchema:
         async with uow:
-            result: ChatModel = await uow.chat.delete_one(filter_by=filter_by)
+            result: ChatModel = await uow.chat.delete_one(filters=filters)
             await uow.commit()
             return ChatSchema(**result.__dict__)
