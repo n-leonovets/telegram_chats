@@ -22,10 +22,10 @@ class UserService:
     async def get_user(
         uow: AbstractUnitOfWork,
         filters: Optional[UserFilter] = None
-    ) -> UserPublic:
+    ) -> UserPrivate:
         async with uow:
             result: UserModel = await uow.user.read_one(filters=filters)
-            return UserPublic(**result.__dict__)
+            return UserPrivate(**result.__dict__)
 
     @staticmethod
     async def get_users(

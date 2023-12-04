@@ -8,7 +8,7 @@ from jose import JWTError, jwt
 
 from src.api.dependencies import UOWDep
 from src.schemas.auth import TokensResponse, TokenType
-from src.schemas.user import UserPublic, UserAdd
+from src.schemas.user import UserPublic, UserAdd, UserPrivate
 from src.services.auth import AuthService
 from src.services.filters.user import UserFilter
 from src.services.user import UserService
@@ -51,7 +51,7 @@ async def required_auth(
     user = await UserService().get_user(uow=uow, filters=UserFilter(username=username))
     if not user or user.is_disabled:
         raise credentials_exception
-    return user
+    return UserPublic(**user.model_dump())
 
 
 @router.post("/login")
@@ -121,4 +121,8 @@ async def register_user(
             detail="You do not have permission to access this resource",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    return await UserService().add_user(uow=uow, user=user)
+    hashed_password = AuthService().get_password_hash(user.password)
+    return await UserService().add_user(
+        uow=uow,
+        user=UserPrivate(**user.model_dump(), hashed_password=hashed_password)
+    )
