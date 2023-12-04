@@ -9,7 +9,7 @@ from src.schemas.chat import ChatSchema, ChatAddSchema, ChatUpdateSchema
 from src.schemas.user import UserIDBSchema
 from src.services.chat import ChatService
 from src.services.filters.base import LimitFilter
-from src.utils.api_response import ApiResponse, ApiErrorDetail
+from src.utils.api_response import ApiErrorDetail
 from src.services.filters.chat import ChatFilter
 
 router = APIRouter(
@@ -24,13 +24,9 @@ async def add_chat(
     uow: UOWDep,
     chat: ChatAddSchema,
     user_auth: UserIDBSchema = Depends(required_auth)
-) -> ApiResponse[ChatSchema]:
+) -> ChatSchema:
     try:
-        result = await ChatService().add_chat(uow=uow, chat=chat)
-        return ApiResponse(
-            status_code=status.HTTP_201_CREATED,
-            data=result
-        )
+        return await ChatService().add_chat(uow=uow, chat=chat)
     except Exception as e:
         _logger.error("Exception error", exc_info=True)
         detail = ApiErrorDetail(
@@ -49,13 +45,9 @@ async def add_chats(
     uow: UOWDep,
     chats: list[ChatAddSchema],
     user_auth: UserIDBSchema = Depends(required_auth)
-) -> ApiResponse[list[ChatSchema]]:
+) -> list[ChatSchema]:
     try:
-        result = await ChatService().add_chats(uow=uow, chats=chats)
-        return ApiResponse(
-            status_code=status.HTTP_201_CREATED,
-            data=result
-        )
+        return await ChatService().add_chats(uow=uow, chats=chats)
     except Exception as e:
         _logger.error("Exception error", exc_info=True)
         detail = ApiErrorDetail(
@@ -75,13 +67,9 @@ async def get_chats(
     filters: Annotated[ChatFilter, Depends()],
     limits: Annotated[LimitFilter, Depends()],
     user_auth: UserIDBSchema = Depends(required_auth)
-) -> ApiResponse[list[ChatSchema]]:
+) -> list[ChatSchema]:
     try:
-        result = await ChatService().get_chats(uow=uow, filters=filters, limits=limits)
-        return ApiResponse(
-            status_code=status.HTTP_200_OK,
-            data=result
-        )
+        return await ChatService().get_chats(uow=uow, filters=filters, limits=limits)
     except Exception as e:
         _logger.error("Exception error", exc_info=True)
         detail = ApiErrorDetail(
@@ -101,13 +89,9 @@ async def update_chat(
     chat_id: int,
     chat: Annotated[ChatUpdateSchema, Depends()],
     user_auth: UserIDBSchema = Depends(required_auth)
-) -> ApiResponse[ChatSchema]:
+) -> ChatSchema:
     try:
-        result = await ChatService().update_chat(uow=uow, chat=chat, filter_by={"id": chat_id})
-        return ApiResponse(
-            status_code=status.HTTP_200_OK,
-            data=result
-        )
+        return await ChatService().update_chat(uow=uow, chat=chat, filter_by={"id": chat_id})
     except Exception as e:
         _logger.error("Exception error", exc_info=True)
         detail = ApiErrorDetail(
@@ -126,13 +110,9 @@ async def delete_chat(
     uow: UOWDep,
     chat_id: int,
     user_auth: UserIDBSchema = Depends(required_auth)
-) -> ApiResponse[ChatSchema]:
+) -> ChatSchema:
     try:
-        result = await ChatService().delete_chat(uow=uow, filter_by={"id": chat_id})
-        return ApiResponse(
-            status_code=status.HTTP_200_OK,
-            data=result
-        )
+        return await ChatService().delete_chat(uow=uow, filter_by={"id": chat_id})
     except Exception as e:
         _logger.error("Exception error", exc_info=True)
         detail = ApiErrorDetail(

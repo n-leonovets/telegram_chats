@@ -60,7 +60,7 @@ async def required_auth(
 async def login_for_access_token(
     uow: UOWDep,
     form: Annotated[OAuth2PasswordRequestForm, Depends()]
-):
+) -> AuthTokens:
     user = await UserService().get_user(uow, filters=UserFilter(username=form.username))
     verify_password = AuthService().verify_password(form.password, user.hashed_password)
 
@@ -74,12 +74,9 @@ async def login_for_access_token(
     access_token = AuthService().create_access_token(username=form.username)
     refresh_token = AuthService().create_refresh_token(username=form.username)
 
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=AuthTokens(
-            access_token=access_token,
-            refresh_token=refresh_token
-        ).model_dump()
+    return AuthTokens(
+        access_token=access_token,
+        refresh_token=refresh_token
     )
 
 
@@ -87,7 +84,7 @@ async def login_for_access_token(
 async def get_new_token(
     uow: UOWDep,
     refresh_token: str = Depends(oauth2_scheme)
-):
+) -> AuthTokens:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -114,10 +111,7 @@ async def get_new_token(
     access_token = AuthService().create_access_token(username=username)
     refresh_token = AuthService().create_refresh_token(username=username)
 
-    return JSONResponse(
-        status_code=status.HTTP_200_OK,
-        content=AuthTokens(
-            access_token=access_token,
-            refresh_token=refresh_token
-        ).model_dump()
+    return AuthTokens(
+        access_token=access_token,
+        refresh_token=refresh_token
     )
