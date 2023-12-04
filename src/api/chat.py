@@ -5,8 +5,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.api.auth import required_auth
 from src.api.dependencies import UOWDep
-from src.schemas.chat import ChatSchema, ChatAddSchema, ChatUpdateSchema
-from src.schemas.user import UserIDBSchema
+from src.schemas.chat import ChatResponse, ChatAdd, ChatUpdate
+from src.schemas.user import UserPublic
 from src.services.chat import ChatService
 from src.services.filters.base import LimitFilter
 from src.utils.api_response import ApiErrorDetail
@@ -22,9 +22,9 @@ _logger = logging.getLogger(__name__)
 @router.post("/chat/")
 async def add_chat(
     uow: UOWDep,
-    chat: ChatAddSchema,
-    user_auth: UserIDBSchema = Depends(required_auth)
-) -> ChatSchema:
+    chat: ChatAdd,
+    user_auth: UserPublic = Depends(required_auth)
+) -> ChatResponse:
     try:
         return await ChatService().add_chat(uow=uow, chat=chat)
     except Exception as e:
@@ -43,9 +43,9 @@ async def add_chat(
 @router.post("/")
 async def add_chats(
     uow: UOWDep,
-    chats: list[ChatAddSchema],
-    user_auth: UserIDBSchema = Depends(required_auth)
-) -> list[ChatSchema]:
+    chats: list[ChatAdd],
+    user_auth: UserPublic = Depends(required_auth)
+) -> list[ChatResponse]:
     try:
         return await ChatService().add_chats(uow=uow, chats=chats)
     except Exception as e:
@@ -66,8 +66,8 @@ async def get_chats(
     uow: UOWDep,
     filters: Annotated[ChatFilter, Depends()],
     limits: Annotated[LimitFilter, Depends()],
-    user_auth: UserIDBSchema = Depends(required_auth)
-) -> list[ChatSchema]:
+    user_auth: UserPublic = Depends(required_auth)
+) -> list[ChatResponse]:
     try:
         return await ChatService().get_chats(uow=uow, filters=filters, limits=limits)
     except Exception as e:
@@ -87,9 +87,9 @@ async def get_chats(
 async def update_chat(
     uow: UOWDep,
     chat_id: int,
-    chat: Annotated[ChatUpdateSchema, Depends()],
-    user_auth: UserIDBSchema = Depends(required_auth)
-) -> ChatSchema:
+    chat: Annotated[ChatUpdate, Depends()],
+    user_auth: UserPublic = Depends(required_auth)
+) -> ChatResponse:
     try:
         return await ChatService().update_chat(uow=uow, chat=chat, filter_by={"id": chat_id})
     except Exception as e:
@@ -109,8 +109,8 @@ async def update_chat(
 async def delete_chat(
     uow: UOWDep,
     chat_id: int,
-    user_auth: UserIDBSchema = Depends(required_auth)
-) -> ChatSchema:
+    user_auth: UserPublic = Depends(required_auth)
+) -> ChatResponse:
     try:
         return await ChatService().delete_chat(uow=uow, filter_by={"id": chat_id})
     except Exception as e:

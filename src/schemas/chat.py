@@ -5,7 +5,7 @@ from pydantic import BaseModel, StringConstraints
 from pydantic_settings import SettingsConfigDict
 
 
-class ChatSchema(BaseModel):
+class ChatResponse(BaseModel):
     id: int
     username: Optional[str] = None
     invite_link: Optional[str] = None
@@ -19,6 +19,7 @@ class ChatSchema(BaseModel):
     is_forum: bool
     is_moderated: bool
     is_closed: bool
+    created_at: datetime.datetime
     updated_at: datetime.datetime
 
     model_config = SettingsConfigDict(
@@ -26,27 +27,7 @@ class ChatSchema(BaseModel):
     )
 
 
-class ChatAddSchema(BaseModel):
-    id: int
-    username: Optional[str] = None
-    invite_link: Optional[str] = None
-    members_count: Optional[int] = 0
-    title: Annotated[str, StringConstraints(max_length=255)] = None
-    description: Optional[Annotated[str, StringConstraints(max_length=255)]] = None
-    is_verified: Optional[bool] = False
-    is_restricted: Optional[bool] = False
-    is_scam: Optional[bool] = False
-    is_fake: Optional[bool] = False
-    is_forum: Optional[bool] = False
-    is_moderated: Optional[bool] = False
-    is_closed: Optional[bool] = False
-
-    model_config = SettingsConfigDict(
-        from_attributes=True
-    )
-
-
-class ChatUpdateSchema(BaseModel):
+class ChatUpdate(BaseModel):
     username: Optional[str] = None
     invite_link: Optional[str] = None
     members_count: Optional[int] = None
@@ -59,6 +40,14 @@ class ChatUpdateSchema(BaseModel):
     is_forum: Optional[bool] = None
     is_moderated: Optional[bool] = None
     is_closed: Optional[bool] = None
+
+    model_config = SettingsConfigDict(
+        from_attributes=True
+    )
+
+
+class ChatAdd(ChatUpdate):
+    id: int
 
     model_config = SettingsConfigDict(
         from_attributes=True

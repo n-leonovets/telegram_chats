@@ -7,8 +7,8 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 
 from src.api.dependencies import UOWDep
-from src.schemas.auth import AuthTokens, TokenType
-from src.schemas.user import UserIDBSchema
+from src.schemas.auth import TokensResponse, TokenType
+from src.schemas.user import UserPublic, UserAdd
 from src.services.auth import AuthService
 from src.services.filters.user import UserFilter
 from src.services.user import UserService
@@ -27,7 +27,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 async def required_auth(
     uow: UOWDep,
     access_token: Annotated[str, Depends(oauth2_scheme)]
-) -> UserIDBSchema:
+) -> UserPublic:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -58,7 +58,7 @@ async def required_auth(
 async def login_for_access_token(
     uow: UOWDep,
     form: Annotated[OAuth2PasswordRequestForm, Depends()]
-) -> AuthTokens:
+) -> TokensResponse:
     user = await UserService().get_user(uow, filters=UserFilter(username=form.username))
     verify_password = AuthService().verify_password(form.password, user.hashed_password)
 
@@ -69,17 +69,17 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    return AuthTokens(
+    return TokensResponse(
         access_token=AuthService().create_access_token(username=form.username),
         refresh_token=AuthService().create_refresh_token(username=form.username)
     )
 
 
-@router.post("/refresh_token", response_model=AuthTokens)
+@router.post("/refresh_token", response_model=TokensResponse)
 async def get_new_token(
     uow: UOWDep,
     refresh_token: str = Depends(oauth2_scheme)
-) -> AuthTokens:
+) -> TokensResponse:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -103,7 +103,7 @@ async def get_new_token(
     if user is None or user.is_disabled:
         raise credentials_exception
 
-    return AuthTokens(
+    return TokensResponse(
         access_token=AuthService().create_access_token(username=username),
         refresh_token=AuthService().create_refresh_token(username=username)
     )
@@ -112,9 +112,9 @@ async def get_new_token(
 @router.post("/register_user")
 async def register_user(
     uow: UOWDep,
-    user: UserIDBSchema = Depends(),
-    user_auth: UserIDBSchema = Depends(required_auth)
-) -> UserIDBSchema:
+    user: UserAdd = Depends(),
+    user_auth: UserPublic = Depends(required_auth)
+) -> UserPublic:
     if not user_auth.is_admin:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
