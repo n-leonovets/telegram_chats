@@ -2,18 +2,19 @@ import logging
 
 from typing import Annotated
 
-from fastapi import Depends, APIRouter, HTTPException, status, Form
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm, OAuth2AuthorizationCodeBearer
+from fastapi import Depends, APIRouter, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
+from starlette.responses import JSONResponse
 
 from src.api.dependencies import UOWDep
-from src.schemas.auth import AuthTokens, Token, TokenType
+from src.schemas.auth import AuthTokens
 from src.schemas.user import UserIDBSchema
 from src.services.auth import AuthService
 from src.services.filters.user import UserFilter
 from src.services.user import UserService
 from config import settings
-from src.utils.api_response import ApiResponse
+
 
 _logger = logging.getLogger(__name__)
 router = APIRouter(
@@ -42,9 +43,10 @@ async def required_auth(
         )
         username: str = payload.get("username")
         token_type: str = payload.get("type")
-        if username is None or not token_type == TokenType.ACCESS:
+        if username is None:
             raise credentials_exception
     except JWTError:
+        _logger.error("JWTError", exc_info=True)
         raise credentials_exception
 
     user = await UserService().get_user(uow=uow, filters=UserFilter(username=username))
@@ -58,7 +60,7 @@ async def required_auth(
 async def login_for_access_token(
     uow: UOWDep,
     form: Annotated[OAuth2PasswordRequestForm, Depends()]
-) -> ApiResponse[AuthTokens]:
+):
     user = await UserService().get_user(uow, filters=UserFilter(username=form.username))
     verify_password = AuthService().verify_password(form.password, user.hashed_password)
 
@@ -72,28 +74,20 @@ async def login_for_access_token(
     access_token = AuthService().create_access_token(username=form.username)
     refresh_token = AuthService().create_refresh_token(username=form.username)
 
-    return ApiResponse(
+    return JSONResponse(
         status_code=status.HTTP_200_OK,
-        data=AuthTokens(
-            access_token=Token(
-                token=access_token,
-                type=TokenType.ACCESS,
-                token_type="bearer"
-            ),
-            refresh_token=Token(
-                token=refresh_token,
-                type=TokenType.REFRESH,
-                token_type="bearer"
-            )
-        )
+        content=AuthTokens(
+            access_token=access_token,
+            refresh_token=refresh_token
+        ).model_dump()
     )
 
 
-@router.post("/refresh_token")
+@router.post("/refresh_token", response_model=AuthTokens)
 async def get_new_token(
     uow: UOWDep,
-    refresh_token: str = Annotated[OAuth2AuthorizationCodeBearer, Depends(oauth2_scheme)]
-) -> ApiResponse[AuthTokens]:
+    refresh_token: str = Depends(oauth2_scheme)
+):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -120,18 +114,10 @@ async def get_new_token(
     access_token = AuthService().create_access_token(username=username)
     refresh_token = AuthService().create_refresh_token(username=username)
 
-    return ApiResponse(
+    return JSONResponse(
         status_code=status.HTTP_200_OK,
-        data=AuthTokens(
-            access_token=Token(
-                token=access_token,
-                type=TokenType.ACCESS,
-                token_type="bearer"
-            ),
-            refresh_token=Token(
-                token=refresh_token,
-                type=TokenType.REFRESH,
-                token_type="bearer"
-            )
-        )
+        content=AuthTokens(
+            access_token=access_token,
+            refresh_token=refresh_token
+        ).model_dump()
     )
