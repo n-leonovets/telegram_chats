@@ -17,11 +17,11 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def read_all(self, filters: Optional[AbstractFilter] = None, limits: Optional[AbstractFilter] = None):
+    async def read_all(self, filters: Optional[list[AbstractFilter]] = None, limits: Optional[AbstractFilter] = None):
         raise NotImplementedError
 
     @abstractmethod
-    async def read_one(self, filters: Optional[AbstractFilter] = None, limits: Optional[AbstractFilter] = None):
+    async def read_one(self, filters: Optional[AbstractFilter] = None):
         raise NotImplementedError
 
     @abstractmethod
@@ -48,12 +48,10 @@ class SQLAlchemyRepository(AbstractRepository):
         result = await self.session.execute(stmt)
         return result.scalars().all()
 
-    async def read_one(self, filters: Optional[AbstractFilter] = None, limits: Optional[AbstractFilter] = None):
+    async def read_one(self, filters: Optional[AbstractFilter] = None):
         query = Select(self.model)
         if filters:
             query = filters.apply(query)
-        if limits:
-            query = limits.apply(query)
         result = await self.session.execute(query)
         return result.scalar_one()
 
@@ -66,12 +64,16 @@ class SQLAlchemyRepository(AbstractRepository):
         result = await self.session.execute(query)
         return result.scalars().all()
 
-    async def update_one(self, values: dict, filter_by: dict):
-        stmt = Update(self.model).values(**values).filter_by(**filter_by).returning(self.model)
+    async def update_one(self, values: dict, filters: Optional[AbstractFilter] = None):
+        stmt = Update(self.model).values(**values).returning(self.model)
+        if filters:
+            stmt = stmt.filter_by(**filters.__dict__)
         result = await self.session.execute(stmt)
         return result.scalar_one()
 
-    async def delete_one(self, filter_by: dict):
-        stmt = Delete(self.model).filter_by(**filter_by).returning(self.model)
+    async def delete_one(self, filters: Optional[AbstractFilter] = None):
+        stmt = Delete(self.model).returning(self.model)
+        if filters:
+            stmt = stmt.filter_by(**filters.__dict__)
         result = await self.session.execute(stmt)
         return result.scalar_one()
