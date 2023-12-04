@@ -14,6 +14,9 @@ class Settings(BaseSettings):
     AUTH_SECRET_KEY: str
     AUTH_ALGORITHM: str
 
+    ADMIN_USERNAME: str
+    ADMIN_HASHED_PASSWORD: str
+
     DB_USER: str
     DB_PASSWORD: str
     DB_HOST: str
