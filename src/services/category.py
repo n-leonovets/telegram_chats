@@ -1,7 +1,7 @@
 from typing import Optional
 
 from src.models.category import CategoryModel
-from src.schemas.category import CategoryResponse, CategoryInSchema
+from src.schemas.category import CategoryResponse, Category
 from src.services.filters.base import LimitFilter
 from src.services.filters.category import CategoryFilter
 from src.utils.unitofwork import AbstractUnitOfWork
@@ -9,7 +9,7 @@ from src.utils.unitofwork import AbstractUnitOfWork
 
 class CategoryService:
     @staticmethod
-    async def add_category(uow: AbstractUnitOfWork, category: CategoryInSchema):
+    async def add_category(uow: AbstractUnitOfWork, category: Category):
         async with uow:
             result: CategoryModel = await uow.category.create_one(values=category.model_dump())
             await uow.commit()
@@ -32,7 +32,7 @@ class CategoryService:
             return CategoryResponse(**result.__dict__)
 
     @staticmethod
-    async def update_category(uow: AbstractUnitOfWork, category: CategoryInSchema, filters: CategoryFilter):
+    async def update_category(uow: AbstractUnitOfWork, category: Category, filters: CategoryFilter):
         async with uow:
             result: CategoryModel = await uow.category.update_one(
                 values=category.model_dump(exclude_none=True),
