@@ -8,7 +8,7 @@ from jose import JWTError, jwt
 from starlette.responses import JSONResponse
 
 from src.api.dependencies import UOWDep
-from src.schemas.auth import AuthTokens
+from src.schemas.auth import AuthTokens, TokenType
 from src.schemas.user import UserIDBSchema
 from src.services.auth import AuthService
 from src.services.filters.user import UserFilter
@@ -43,7 +43,7 @@ async def required_auth(
         )
         username: str = payload.get("username")
         token_type: str = payload.get("type")
-        if username is None:
+        if username is None and token_type == TokenType.ACCESS:
             raise credentials_exception
     except JWTError:
         _logger.error("JWTError", exc_info=True)

@@ -8,12 +8,7 @@ class TokenType(StrEnum):
     REFRESH = auto()
 
 
-class Token(BaseModel):
-    token: str
-    type: TokenType
-    token_type: str
-
-
 class AuthTokens(BaseModel):
-    access_token: Token
-    refresh_token: Token
+    access_token: str
+    refresh_token: str
+    type: str = "bearer"
