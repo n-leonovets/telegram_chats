@@ -42,13 +42,13 @@ class ChatFilter(AbstractFilter):
         if self.members_count_less is not None:
             query = query.where(ChatModel.members_count < self.members_count_less)
 
-        if self.keywords_in_title:
+        if self.keywords_in_title is not None:
             title_conditions = [
                 ChatModel.title.ilike(f"%{search_string}%") for search_string in self.keywords_in_title
             ]
             query = query.where(or_(*title_conditions))
 
-        if self.keywords_in_description:
+        if self.keywords_in_description is not None:
             description_conditions = [
                 ChatModel.title.ilike(f"%{search_string}%") for search_string in self.keywords_in_description
             ]

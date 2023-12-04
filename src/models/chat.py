@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base, str32, str255, boolFalse, updated_at
+from src.database import Base, str32, str255, boolFalse, created_at, updated_at
 
 
 class ChatModel(Base):
@@ -19,4 +19,5 @@ class ChatModel(Base):
     is_forum: Mapped[boolFalse]
     is_moderated: Mapped[boolFalse]
     is_closed: Mapped[boolFalse]
+    created_at: Mapped[created_at]
     updated_at: Mapped[updated_at]

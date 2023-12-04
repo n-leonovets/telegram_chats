@@ -2,11 +2,13 @@ from abc import ABC, abstractmethod
 
 from src.database import async_session_maker
 from src.repositories.chat import ChatRepository
+from src.repositories.category import CategoryRepository
 from src.repositories.user import UserRepository
 
 
 class AbstractUnitOfWork(ABC):
     chat: ChatRepository
+    category: CategoryRepository
     user: UserRepository
 
     @abstractmethod
@@ -38,6 +40,7 @@ class UnitOfWork(AbstractUnitOfWork):
         self.session = self.session_factory()
 
         self.chat = ChatRepository(self.session)
+        self.category = CategoryRepository(self.session)
         self.user = UserRepository(self.session)
 
     async def __aexit__(self, *args):
