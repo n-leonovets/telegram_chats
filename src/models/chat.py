@@ -1,12 +1,12 @@
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base, str32, str255, boolFalse, created_at, updated_at
+from src.database import Base, bigint, str32, str255, boolFalse, created_at, updated_at
 
 
 class ChatModel(Base):
     __tablename__ = "chat"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=False)
+    id: Mapped[bigint] = mapped_column(primary_key=True, autoincrement=False)
     username: Mapped[str32 | None]
     invite_link: Mapped[str255 | None]
     members_count: Mapped[int] = mapped_column(server_default="0")
@@ -19,5 +19,3 @@ class ChatModel(Base):
     is_forum: Mapped[boolFalse]
     is_moderated: Mapped[boolFalse]
     is_closed: Mapped[boolFalse]
-    created_at: Mapped[created_at]
-    updated_at: Mapped[updated_at]

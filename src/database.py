@@ -2,9 +2,9 @@ import datetime
 from typing import AsyncGenerator, Annotated
 
 from fastapi import HTTPException
-from sqlalchemy import String, func
+from sqlalchemy import String, func, TIMESTAMP, BIGINT
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
-from sqlalchemy.orm import DeclarativeBase, mapped_column
+from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped
 
 from config import settings
 
@@ -41,6 +41,7 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
             await session.close()
 
 
+bigint = Annotated[int, int]
 str32 = Annotated[str, 32]
 str64 = Annotated[str, 64]
 str255 = Annotated[str, 255]
@@ -56,7 +57,11 @@ updated_at = Annotated[datetime.datetime, mapped_column(
 
 class Base(DeclarativeBase):
     type_annotation_map = {
+        bigint: BIGINT,
         str32: String(32),
         str64: String(64),
-        str255: String(255)
+        str255: String(255),
+        datetime.datetime: TIMESTAMP(timezone=False),
     }
+    created_at: Mapped[created_at]
+    updated_at: Mapped[updated_at]
