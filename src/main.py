@@ -2,13 +2,14 @@ import asyncio
 import logging
 import sys
 
+import uvloop
 from fastapi import FastAPI
 
 from config import settings
 from src.api.auth import router as auth_router
 from src.api.category import router as category_router
 from src.api.chat import router as chat_router
-
+from src.utils.asyncio_utils import asyncio_speedup
 
 _logger = logging.getLogger(__name__)
 
@@ -29,13 +30,7 @@ origins = [
 
 @app.on_event("startup")
 async def on_startup():
-    if sys.platform in ('win32', 'cygwin', 'cli'):
-        # Windows
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    else:
-        # Linux & MacOS
-        from uvloop import install
-        install()
+    asyncio_speedup()
 
 
 async def shutdown():
