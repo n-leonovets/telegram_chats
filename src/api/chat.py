@@ -35,6 +35,7 @@ async def add_chat(
             name=e.__class__.__name__,
             message=e.args[0]
         ).model_dump()
+        # await uow.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail={**detail}

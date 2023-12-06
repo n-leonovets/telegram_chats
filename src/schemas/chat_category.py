@@ -3,12 +3,12 @@ import datetime
 from pydantic import BaseModel
 from pydantic_settings import SettingsConfigDict
 
-from src.schemas.base import DatetimeBaseModel
 
-
-class ChatCategoryResponse(DatetimeBaseModel):
+class ChatCategoryResponse(BaseModel):
     chat_id: int
     category: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
 
     model_config = SettingsConfigDict(
         from_attributes=True

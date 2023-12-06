@@ -1,14 +1,16 @@
+import datetime
+
 from pydantic import BaseModel
 from pydantic.json_schema import SkipJsonSchema
 
-from src.schemas.base import DatetimeBaseModel
 
-
-class UserPublic(DatetimeBaseModel):
+class UserPublic(BaseModel):
     username: str
     fullname: str
     is_admin: bool | None = False
     is_disabled: bool | None = False
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
 
 
 class UserPrivate(UserPublic):

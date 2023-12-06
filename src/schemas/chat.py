@@ -6,10 +6,8 @@ from pydantic.json_schema import SkipJsonSchema
 from pydantic_core.core_schema import FieldValidationInfo
 from pydantic_settings import SettingsConfigDict
 
-from src.schemas.base import DatetimeBaseModel
 
-
-class ChatResponse(DatetimeBaseModel):
+class ChatResponse(BaseModel):
     id: int
     username: str | None = None
     invite_link: str | None = None
@@ -23,6 +21,8 @@ class ChatResponse(DatetimeBaseModel):
     is_forum: bool
     is_moderated: bool
     is_closed: bool
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
 
     model_config = SettingsConfigDict(
         from_attributes=True
