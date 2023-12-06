@@ -1,11 +1,11 @@
 import asyncio
-import sys
 
 from src.database import async_engine, Base
 from src.models import chat, category, chat_category, user
 
 from src.schemas.user import UserPrivate
 from src.services.user import UserService
+from src.utils.asyncio_utils import asyncio_speedup
 from src.utils.unitofwork import UnitOfWork
 
 from config import settings
@@ -36,14 +36,7 @@ async def main():
 
 
 if __name__ == "__main__":
-    if sys.platform in ('win32', 'cygwin', 'cli'):
-        # Windows
-        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-    else:
-        # Linux & MacOS
-        from uvloop import install
-        install()
-
+    asyncio_speedup()
     asyncio.run(main())
     # python -m migrations.env
 
