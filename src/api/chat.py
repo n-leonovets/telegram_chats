@@ -9,7 +9,7 @@ from src.schemas.chat import ChatResponse, ChatAdd, ChatUpdate
 from src.schemas.user import UserPublic
 from src.services.chat import ChatService
 from src.services.filters.base import LimitFilter
-from src.utils.api_response import ApiErrorDetail
+from src.utils.exception_detail import get_exception_detail
 from src.services.filters.chat import ChatFilter
 
 
@@ -30,15 +30,9 @@ async def add_chat(
         return await ChatService().add_chat(uow=uow, chat=chat)
     except Exception as e:
         _logger.error("Exception error", exc_info=True)
-        detail = ApiErrorDetail(
-            module=e.__class__.__module__,
-            name=e.__class__.__name__,
-            message=e.args[0]
-        ).model_dump()
-        # await uow.rollback()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={**detail}
+            detail=get_exception_detail(e)
         )
 
 
@@ -52,14 +46,9 @@ async def add_chats(
         return await ChatService().add_chats(uow=uow, chats=chats)
     except Exception as e:
         _logger.error("Exception error", exc_info=True)
-        detail = ApiErrorDetail(
-            module=e.__class__.__module__,
-            name=e.__class__.__name__,
-            message=e.args[0]
-        ).model_dump()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={**detail}
+            detail=get_exception_detail(e)
         )
 
 
@@ -74,14 +63,9 @@ async def get_chats(
         return await ChatService().get_chats(uow=uow, filters=filters, limits=limits)
     except Exception as e:
         _logger.error("Exception error", exc_info=True)
-        detail = ApiErrorDetail(
-            module=e.__class__.__module__,
-            name=e.__class__.__name__,
-            message=e.args[0]
-        ).model_dump()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={**detail}
+            detail=get_exception_detail(e)
         )
 
 
@@ -96,14 +80,9 @@ async def update_chat(
         return await ChatService().update_chat(uow=uow, chat=chat, filters=ChatFilter(chat_id=chat_id))
     except Exception as e:
         _logger.error("Exception error", exc_info=True)
-        detail = ApiErrorDetail(
-            module=e.__class__.__module__,
-            name=e.__class__.__name__,
-            message=e.args[0]
-        ).model_dump()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={**detail}
+            detail=get_exception_detail(e)
         )
 
 
@@ -117,12 +96,7 @@ async def delete_chat(
         return await ChatService().delete_chat(uow=uow, filters=ChatFilter(chat_id=chat_id))
     except Exception as e:
         _logger.error("Exception error", exc_info=True)
-        detail = ApiErrorDetail(
-            module=e.__class__.__module__,
-            name=e.__class__.__name__,
-            message=e.args[0]
-        ).model_dump()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail={**detail}
+            detail=get_exception_detail(e)
         )
