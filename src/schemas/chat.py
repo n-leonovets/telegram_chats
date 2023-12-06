@@ -1,9 +1,8 @@
 import datetime
 from typing import Annotated
 
-from pydantic import BaseModel, StringConstraints, field_validator, ValidationError
+from pydantic import BaseModel, StringConstraints, model_validator
 from pydantic.json_schema import SkipJsonSchema
-from pydantic_core import PydanticCustomError
 from pydantic_core.core_schema import FieldValidationInfo
 from pydantic_settings import SettingsConfigDict
 
@@ -68,16 +67,8 @@ class ChatAdd(BaseModel):
         from_attributes=True
     )
 
-    @field_validator("username")
-    def check_username_and_invite_link_not_empty(cls, username: str, info: FieldValidationInfo):
-        invite_link = info.data.get("invite_link")
-        if username is None and invite_link is None:
+    @model_validator(mode="after")
+    def check_username_and_invite_link_not_empty(self) -> 'ChatAdd':
+        if self.username is None and self.invite_link is None:
             raise ValueError("username and invite_link can not be both empty")
-        return username
-
-    @field_validator("invite_link")
-    def check_invite_link_and_username_not_empty(cls, invite_link: str, info: FieldValidationInfo):
-        username = info.data.get("username")
-        if invite_link is None and username is None:
-            raise ValueError("username and invite_link can not be both empty")
-        return invite_link
+        return self
