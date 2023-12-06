@@ -12,6 +12,7 @@ from src.services.filters.base import LimitFilter
 from src.utils.api_response import ApiErrorDetail
 from src.services.filters.chat import ChatFilter
 
+
 router = APIRouter(
     prefix="/chats",
     tags=["Chats"]
@@ -22,7 +23,7 @@ _logger = logging.getLogger(__name__)
 @router.post("/chat/")
 async def add_chat(
     uow: UOWDep,
-    chat: ChatAdd = Depends(),
+    chat: ChatAdd,
     user_auth: UserPublic = Depends(required_auth)
 ) -> ChatResponse:
     try:
@@ -87,7 +88,7 @@ async def get_chats(
 async def update_chat(
     uow: UOWDep,
     chat_id: int,
-    chat: Annotated[ChatUpdate, Depends()],
+    chat: ChatUpdate,
     user_auth: UserPublic = Depends(required_auth)
 ) -> ChatResponse:
     try:
