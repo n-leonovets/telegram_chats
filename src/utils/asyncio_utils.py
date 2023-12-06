@@ -1,12 +1,7 @@
 import asyncio
 import platform
-from enum import StrEnum, auto
 
-
-class PlatformName(StrEnum):
-    WINDOWS = auto()
-    DARWIN = auto()
-    LINUX = auto()
+from src.enums.utils import PlatformName
 
 
 def asyncio_speedup() -> None:

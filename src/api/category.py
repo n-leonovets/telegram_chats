@@ -19,7 +19,7 @@ router = APIRouter(
 _logger = logging.getLogger(__name__)
 
 
-@router.post("/chat/")
+@router.post("/category/")
 async def add_chat(
     uow: UOWDep,
     category: Category,

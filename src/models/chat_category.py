@@ -1,7 +1,7 @@
 from sqlalchemy import func, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base, bigint, created_at, updated_at
+from src.database import Base, bigint
 
 
 class ChatCategoryModel(Base):

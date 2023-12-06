@@ -7,7 +7,8 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 
 from src.api.dependencies import UOWDep
-from src.schemas.auth import TokensResponse, TokenType
+from src.enums.auth import TokenType
+from src.schemas.auth import TokensResponse
 from src.schemas.user import UserPublic, UserAdd, UserPrivate
 from src.services.auth import AuthService
 from src.services.filters.user import UserFilter

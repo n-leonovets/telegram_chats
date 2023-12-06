@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base, bigint, str32, str255, boolFalse, created_at, updated_at
+from src.database import Base, bigint, str32, str255, boolFalse
 
 
 class ChatModel(Base):

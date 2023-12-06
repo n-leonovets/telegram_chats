@@ -1,11 +1,4 @@
-from enum import StrEnum, auto
-
 from pydantic import BaseModel
-
-
-class TokenType(StrEnum):
-    ACCESS = auto()
-    REFRESH = auto()
 
 
 class TokensResponse(BaseModel):

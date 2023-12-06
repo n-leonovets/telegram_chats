@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Mapped, mapped_column
 
-from src.database import Base, str64, created_at, updated_at
+from src.database import Base, str64
 
 
 class CategoryModel(Base):

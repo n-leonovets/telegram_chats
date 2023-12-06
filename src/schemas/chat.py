@@ -3,7 +3,6 @@ from typing import Annotated
 
 from pydantic import BaseModel, StringConstraints, model_validator
 from pydantic.json_schema import SkipJsonSchema
-from pydantic_core.core_schema import FieldValidationInfo
 from pydantic_settings import SettingsConfigDict
 
 
