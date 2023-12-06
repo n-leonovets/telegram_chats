@@ -1,6 +1,7 @@
 import logging
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings
 from src.api.auth import router as auth_router
@@ -32,6 +33,16 @@ origins = [
 ]
 
 app.add_middleware(LogStatsMiddleware)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS", "DELETE", "PATCH", "PUT"],
+    allow_headers=[
+        "*",
+        # "Access-Control-Allow-Headers", "Access-Control-Allow-Origin", "Authorization", "Content-Type", "Set-Cookie"
+    ],
+)
 
 app.include_router(auth_router)
 app.include_router(category_router)
