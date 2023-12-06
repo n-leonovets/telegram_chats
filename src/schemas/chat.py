@@ -1,8 +1,10 @@
 import datetime
-from typing import Optional, Annotated
+from typing import Annotated
 
-from pydantic import BaseModel, StringConstraints, validator
+from pydantic import BaseModel, StringConstraints, field_validator, ValidationError
 from pydantic.json_schema import SkipJsonSchema
+from pydantic_core import PydanticCustomError
+from pydantic_core.core_schema import FieldValidationInfo
 from pydantic_settings import SettingsConfigDict
 
 
@@ -52,7 +54,7 @@ class ChatAdd(BaseModel):
     username: str | SkipJsonSchema[None] = None
     invite_link: str | SkipJsonSchema[None] = None
     members_count: int | SkipJsonSchema[None] = 0
-    title: str | SkipJsonSchema[None] = None
+    title: str
     description: str | SkipJsonSchema[None] = None
     is_verified: bool | SkipJsonSchema[None] = False
     is_restricted: bool | SkipJsonSchema[None] = False
@@ -66,18 +68,16 @@ class ChatAdd(BaseModel):
         from_attributes=True
     )
 
-    @validator("title", pre=True, always=True)
-    @classmethod
-    def check_attr1_and_attr2_not_empty(cls, value, values):
-        attr2_value = values.get("description")
-        if value is None and attr2_value is None:
-            raise ValueError("title and description cannot be both empty")
-        return value
+    @field_validator("username")
+    def check_username_and_invite_link_not_empty(cls, username: str, info: FieldValidationInfo):
+        invite_link = info.data.get("invite_link")
+        if username is None and invite_link is None:
+            raise ValueError("username and invite_link can not be both empty")
+        return username
 
-    @validator("description", pre=True, always=True)
-    @classmethod
-    def check_attr2_and_attr1_not_empty(cls, value, values):
-        attr1_value = values.get("title")
-        if value is None and attr1_value is None:
-            raise ValueError("title and description cannot be both empty")
-        return value
+    @field_validator("invite_link")
+    def check_invite_link_and_username_not_empty(cls, invite_link: str, info: FieldValidationInfo):
+        username = info.data.get("username")
+        if invite_link is None and username is None:
+            raise ValueError("username and invite_link can not be both empty")
+        return invite_link
