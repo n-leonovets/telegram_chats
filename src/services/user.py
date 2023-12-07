@@ -16,7 +16,7 @@ class UserService:
         async with uow:
             result: UserModel = await uow.user.create_one(values=user.model_dump())
             await uow.commit()
-            return UserPublic(**result.__dict__)
+            return UserPublic.model_validate(result, from_attributes=True)
 
     @staticmethod
     async def get_user(
@@ -25,7 +25,7 @@ class UserService:
     ) -> UserPrivate:
         async with uow:
             result: UserModel = await uow.user.read_one(filters=filters)
-            return UserPrivate(**result.__dict__)
+            return UserPrivate.model_validate(result, from_attributes=True)
 
     @staticmethod
     async def get_users(
@@ -35,7 +35,7 @@ class UserService:
     ) -> list[UserPublic]:
         async with uow:
             result: list[UserModel] = await uow.user.read_all(filters=filters, limits=limits)
-            return [UserPublic(**user.__dict__) for user in result]
+            return [UserPublic.model_validate(user, from_attributes=True) for user in result]
 
     @staticmethod
     async def update_user(
@@ -48,7 +48,7 @@ class UserService:
                 values=user.model_dump(),
                 filters=filters
             )
-            return UserPublic(**result.__dict__)
+            return UserPublic.model_validate(result, from_attributes=True)
 
     @staticmethod
     async def delete_user(
@@ -57,4 +57,4 @@ class UserService:
     ) -> UserPublic:
         async with uow:
             result: UserModel = await uow.user.delete_one(filters=filters)
-            return UserPublic(**result.__dict__)
+            return UserPublic.model_validate(result, from_attributes=True)

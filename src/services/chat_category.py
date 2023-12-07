@@ -18,7 +18,7 @@ class ChatCategoryService:
         async with uow:
             result: ChatCategory = await uow.chat_category.create_one(values=chat_category.model_dump())
             await uow.commit()
-            return ChatCategoryResponse(**result.__dict__)
+            return ChatCategoryResponse.model_validate(result, from_attributes=True)
 
     @staticmethod
     async def add_chat_categories(
@@ -30,7 +30,7 @@ class ChatCategoryService:
                 values=[chat_category.model_dump() for chat_category in chat_categories]
             )
             await uow.commit()
-            return [ChatCategoryResponse(**chat_category.__dict__) for chat_category in result]
+            return [ChatCategoryResponse.model_validate(chat, from_attributes=True) for chat in result]
 
     @staticmethod
     async def get_chat_categories(
@@ -40,7 +40,7 @@ class ChatCategoryService:
     ) -> list[ChatCategoryResponse]:
         async with uow:
             result: list[ChatCategory] = await uow.chat_category.read_all(filters=filters, limits=limits)
-            return [ChatCategoryResponse(**chat.__dict__) for chat in result]
+            return [ChatCategoryResponse.model_validate(chat, from_attributes=True) for chat in result]
 
     @staticmethod
     async def update_chat_category(
@@ -54,7 +54,7 @@ class ChatCategoryService:
                 filters=filters
             )
             await uow.commit()
-            return ChatCategoryResponse(**result.__dict__)
+            return ChatCategoryResponse.model_validate(result, from_attributes=True)
 
     @staticmethod
     async def delete_chat_category(
@@ -64,4 +64,4 @@ class ChatCategoryService:
         async with uow:
             result: ChatCategory = await uow.chat_category.delete_one(filters=filters)
             await uow.commit()
-            return ChatCategoryResponse(**result.__dict__)
+            return ChatCategoryResponse.model_validate(result, from_attributes=True)
