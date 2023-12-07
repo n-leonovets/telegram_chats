@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.api.auth import required_auth
 from src.api.dependencies import UOWDep
-from src.schemas.category import Category, CategoryResponse
+from src.schemas.category import Category, CategoryResponse, CategoryFullResponse
 from src.schemas.user import UserPublic
 from src.services.category import CategoryService
 from src.services.filters.base import LimitFilter
@@ -57,7 +57,7 @@ async def get_categories(
     filters: Annotated[CategoryFilter, Depends()],
     limits: Annotated[LimitFilter, Depends()],
     user_auth: UserPublic = Depends(required_auth)
-) -> list[CategoryResponse]:
+) -> list[CategoryFullResponse]:
     try:
         return await CategoryService().get_categories(uow=uow, filters=filters, limits=limits)
     except Exception as e:

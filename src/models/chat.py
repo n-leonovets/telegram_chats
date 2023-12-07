@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.database import Base, bigint, str32, str255, boolFalse
 
@@ -19,3 +19,10 @@ class ChatModel(Base):
     is_forum: Mapped[boolFalse]
     is_moderated: Mapped[boolFalse]
     is_closed: Mapped[boolFalse]
+
+    categories: Mapped[list['CategoryModel']] = relationship(
+        "CategoryModel",
+        secondary="chat_category",
+        back_populates="chats",
+        lazy="selectin"
+    )

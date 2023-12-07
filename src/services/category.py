@@ -1,7 +1,7 @@
 from typing import Optional
 
 from src.models.category import CategoryModel
-from src.schemas.category import CategoryResponse, Category
+from src.schemas.category import CategoryResponse, Category, CategoryFullResponse
 from src.services.filters.base import LimitFilter
 from src.services.filters.category import CategoryFilter
 from src.utils.unitofwork import AbstractUnitOfWork
@@ -13,7 +13,7 @@ class CategoryService:
         async with uow:
             result: CategoryModel = await uow.category.create_one(values=category.model_dump())
             await uow.commit()
-            return CategoryResponse(**result.__dict__)
+            return CategoryResponse.model_validate(result, from_attributes=True)
 
     @staticmethod
     async def add_categoris(uow: AbstractUnitOfWork, categoris: list[Category]) -> list[CategoryResponse]:
@@ -22,23 +22,23 @@ class CategoryService:
                 values=[category.model_dump() for category in categoris]
             )
             await uow.commit()
-            return [CategoryResponse(**category.__dict__) for category in result]
+            return [CategoryResponse.model_validate(row, from_attributes=True) for row in result]
 
     @staticmethod
     async def get_categories(
         uow: AbstractUnitOfWork,
         filters: Optional[CategoryFilter] = None,
         limits: Optional[LimitFilter] = None
-    ) -> list[CategoryResponse]:
+    ) -> list[CategoryFullResponse]:
         async with uow:
             result: list[CategoryModel] = await uow.category.read_all(filters=filters, limits=limits)
-            return [CategoryResponse(**category.__dict__) for category in result]
+            return [CategoryFullResponse.model_validate(row, from_attributes=True) for row in result]
 
     @staticmethod
-    async def get_category(uow: AbstractUnitOfWork, filters: CategoryFilter) -> CategoryResponse:
+    async def get_category(uow: AbstractUnitOfWork, filters: CategoryFilter) -> CategoryFullResponse:
         async with uow:
             result: CategoryModel = await uow.category.read_one(filters=filters)
-            return CategoryResponse(**result.__dict__)
+            return CategoryFullResponse.model_validate(result, from_attributes=True)
 
     @staticmethod
     async def update_category(uow: AbstractUnitOfWork, category: Category, filters: CategoryFilter) -> CategoryResponse:
@@ -48,11 +48,11 @@ class CategoryService:
                 filters=filters
             )
             await uow.commit()
-            return CategoryResponse(**result.__dict__)
+            return CategoryResponse.model_validate(result, from_attributes=True)
 
     @staticmethod
     async def delete_category(uow: AbstractUnitOfWork, filters: CategoryFilter) -> CategoryResponse:
         async with uow:
             result: CategoryModel = await uow.category.delete_one(filters=filters)
             await uow.commit()
-            return CategoryResponse(**result.__dict__)
+            return CategoryResponse.model_validate(result, from_attributes=True)
