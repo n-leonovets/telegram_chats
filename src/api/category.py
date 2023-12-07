@@ -20,7 +20,7 @@ _logger = logging.getLogger(__name__)
 
 
 @router.post("/category/")
-async def add_chat(
+async def add_category(
     uow: UOWDep,
     category: Category,
     user_auth: UserPublic = Depends(required_auth)
@@ -36,7 +36,7 @@ async def add_chat(
 
 
 @router.post("/")
-async def add_chats(
+async def add_categories(
     uow: UOWDep,
     categoris: list[Category],
     user_auth: UserPublic = Depends(required_auth)
@@ -52,7 +52,7 @@ async def add_chats(
 
 
 @router.get("/")
-async def get_chats(
+async def get_categories(
     uow: UOWDep,
     filters: Annotated[CategoryFilter, Depends()],
     limits: Annotated[LimitFilter, Depends()],
@@ -69,7 +69,7 @@ async def get_chats(
 
 
 @router.patch("/{category_id}")
-async def update_chat(
+async def update_category(
     uow: UOWDep,
     category_id: int,
     category: Category,
@@ -88,7 +88,7 @@ async def update_chat(
 
 
 @router.delete("/{category_id}")
-async def delete_chat(
+async def delete_category(
     uow: UOWDep,
     category_id: int,
     user_auth: UserPublic = Depends(required_auth)
