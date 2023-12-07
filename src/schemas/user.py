@@ -9,8 +9,8 @@ class UserPublic(BaseModel):
     fullname: str
     is_admin: bool | None = False
     is_disabled: bool | None = False
-    created_at: datetime.datetime
-    updated_at: datetime.datetime
+    created_at: datetime.datetime | None = None
+    updated_at: datetime.datetime | None = None
 
 
 class UserPrivate(UserPublic):

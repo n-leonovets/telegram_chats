@@ -14,7 +14,7 @@ class UserService:
         user: UserPrivate
     ) -> UserPublic:
         async with uow:
-            result: UserModel = await uow.user.create_one(values=user.model_dump())
+            result: UserModel = await uow.user.create_one(values=user.model_dump(exclude_none=True))
             await uow.commit()
             return UserPublic.model_validate(result, from_attributes=True)
 
