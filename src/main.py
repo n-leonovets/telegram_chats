@@ -7,6 +7,7 @@ from config import settings
 from src.api.auth import router as auth_router
 from src.api.category import router as category_router
 from src.api.chat import router as chat_router
+from src.api.chat_category import router as chat_category_router
 from src.middleware import LogStatsMiddleware
 from src.utils.asyncio_utils import asyncio_speedup
 
@@ -47,5 +48,4 @@ app.add_middleware(
 app.include_router(auth_router)
 app.include_router(category_router)
 app.include_router(chat_router)
-
-
+app.include_router(chat_category_router)
