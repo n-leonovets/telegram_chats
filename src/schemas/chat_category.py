@@ -3,9 +3,6 @@ import datetime
 from pydantic import BaseModel
 from pydantic_settings import SettingsConfigDict
 
-# from src.schemas.category import CategoryResponse
-# from src.schemas.chat import ChatResponse
-
 
 class ChatCategoryResponse(BaseModel):
     chat_id: int

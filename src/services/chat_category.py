@@ -1,10 +1,7 @@
 from typing import Optional
 
-from src.models.chat import ChatModel
-from src.schemas.chat import ChatResponse, ChatAdd, ChatUpdate
 from src.schemas.chat_category import ChatCategory, ChatCategoryResponse
 from src.services.filters.base import LimitFilter
-from src.services.filters.chat import ChatFilter
 from src.services.filters.chat_category import ChatCategoryFilter
 from src.utils.unitofwork import AbstractUnitOfWork
 
