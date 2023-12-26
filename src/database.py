@@ -16,7 +16,7 @@ async_engine = create_async_engine(
     max_overflow=100,
     connect_args={
         "server_settings": {
-            "application_name": "Telegram Chats"
+            "application_name": settings.APP_NAME
         }
     }
 )
