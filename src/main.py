@@ -11,7 +11,7 @@ from src.api.chat_category import router as chat_category_router
 from src.middleware import LogStatsMiddleware
 from src.utils.asyncio_utils import asyncio_speedup
 
-_logger = logging.getLogger(__name__)
+logging.getLogger(__name__)
 
 
 async def on_startup():

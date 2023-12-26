@@ -75,3 +75,14 @@ class ChatFilter(AbstractFilter):
             query = query.where(ChatModel.updated_at < self.updated_to)
 
         return query
+
+
+@dataclass
+class ChatDeleteManyFilter(AbstractFilter):
+    chat_ids: Annotated[list[int] | SkipJsonSchema[None], Query(...)] = None
+  
+    def apply(self, query: Select) -> Select:
+        if self.chat_ids is not None:
+            query = query.where(ChatModel.id.in_(self.chat_ids))
+      
+        return query

@@ -10,7 +10,7 @@ from src.schemas.user import UserPublic
 from src.services.chat import ChatService
 from src.services.filters.base import LimitFilter
 from src.utils.exception_detail import get_exception_detail
-from src.services.filters.chat import ChatFilter
+from src.services.filters.chat import ChatDeleteManyFilter, ChatFilter
 
 
 router = APIRouter(
@@ -20,7 +20,7 @@ router = APIRouter(
 _logger = logging.getLogger(__name__)
 
 
-@router.post("/chat/")
+@router.post("/")
 async def add_chat(
     uow: UOWDep,
     chat: ChatAdd,
@@ -36,7 +36,7 @@ async def add_chat(
         )
 
 
-@router.post("/")
+@router.post("/bulk")
 async def add_chats(
     uow: UOWDep,
     chats: list[ChatAdd],
@@ -78,6 +78,37 @@ async def update_chat(
 ) -> ChatResponse:
     try:
         return await ChatService().update_chat(uow=uow, chat=chat, filters=ChatFilter(chat_id=chat_id))
+    except Exception as e:
+        _logger.error("Exception error", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=get_exception_detail(e)
+        )
+    
+@router.patch("/")
+async def update_chats(
+    uow: UOWDep,
+    chat: ChatUpdate,
+    filters: Annotated[ChatDeleteManyFilter, Depends()],
+    user_auth: UserPublic = Depends(required_auth)
+) -> list[ChatResponse]:
+    try:
+        return await ChatService().update_chats(uow=uow, chat=chat, filters=filters)
+    except Exception as e:
+        _logger.error("Exception error", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=get_exception_detail(e)
+        )
+
+@router.delete("/")
+async def delete_chats(
+    uow: UOWDep,
+    filters: Annotated[ChatDeleteManyFilter, Depends()],
+    user_auth: UserPublic = Depends(required_auth)
+) -> None:
+    try:
+        return await ChatService().delete_chats(uow=uow, filters=filters)
     except Exception as e:
         _logger.error("Exception error", exc_info=True)
         raise HTTPException(

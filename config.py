@@ -1,3 +1,4 @@
+import os
 import logging
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -9,7 +10,7 @@ load_dotenv()
 
 class Settings(BaseSettings):
     APP_NAME: str = "Telegram Chats"
-    DEBUG: bool = False
+    DEBUG: bool = os.environ.get('DEBUG', False)
 
     AUTH_SECRET_KEY: str
     AUTH_ALGORITHM: str
