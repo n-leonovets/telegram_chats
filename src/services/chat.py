@@ -33,10 +33,10 @@ class ChatService:
             return [ChatFullResponse.model_validate(row, from_attributes=True) for row in result]
 
     @staticmethod
-    async def update_chat(uow: AbstractUnitOfWork, chat: ChatUpdate, filters: ChatFilter) -> ChatResponse:
+    async def update_chat(uow: AbstractUnitOfWork, chat: ChatUpdate, filters: ChatFilter, exclude_none: bool = True) -> ChatResponse:
         async with uow:
             result: ChatModel = await uow.chat.update_one(
-                values=chat.model_dump(exclude_none=True),
+                values=chat.model_dump(exclude_none=exclude_none),
                 filters=filters
             )
             await uow.commit()

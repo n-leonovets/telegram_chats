@@ -38,5 +38,4 @@ async def main():
 if __name__ == "__main__":
     asyncio_speedup()
     asyncio.run(main())
-    # python -m migrations.env
 

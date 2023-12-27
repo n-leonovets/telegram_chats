@@ -1,10 +1,10 @@
 import datetime
 from dataclasses import dataclass
-from typing import Annotated
+from typing import Annotated, Union
 
 from fastapi import Query
 from pydantic.json_schema import SkipJsonSchema
-from sqlalchemy import Select, or_
+from sqlalchemy import Delete, Select, Update, or_
 
 from src.models.chat import ChatModel
 from src.utils.filters import AbstractFilter
@@ -29,7 +29,7 @@ class ChatFilter(AbstractFilter):
     updated_after: datetime.datetime | SkipJsonSchema[None] = None
     updated_to: datetime.datetime | SkipJsonSchema[None] = None
 
-    def apply(self, query: Select) -> Select:
+    def apply(self, query: Select) -> Union[Select, Update, Delete]:
         if self.chat_id is not None:
             query = query.where(ChatModel.id == self.chat_id)
         if self.username is not None:

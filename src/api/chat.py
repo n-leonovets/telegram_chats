@@ -70,14 +70,30 @@ async def get_chats(
 
 
 @router.patch("/{chat_id}")
+async def update_partial_chat(
+    uow: UOWDep,
+    chat_id: int,
+    chat: ChatUpdate,
+    # user_auth: UserPublic = Depends(required_auth)
+) -> ChatResponse:
+    try:
+        return await ChatService().update_chat(uow=uow, chat=chat, filters=ChatFilter(chat_id=chat_id))
+    except Exception as e:
+        _logger.error("Exception error", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=get_exception_detail(e)
+        )
+    
+@router.put("/{chat_id}")
 async def update_chat(
     uow: UOWDep,
     chat_id: int,
     chat: ChatUpdate,
-    user_auth: UserPublic = Depends(required_auth)
+    # user_auth: UserPublic = Depends(required_auth)
 ) -> ChatResponse:
     try:
-        return await ChatService().update_chat(uow=uow, chat=chat, filters=ChatFilter(chat_id=chat_id))
+        return await ChatService().update_chat(uow=uow, chat=chat, filters=ChatFilter(chat_id=chat_id), exclude_none=False)
     except Exception as e:
         _logger.error("Exception error", exc_info=True)
         raise HTTPException(

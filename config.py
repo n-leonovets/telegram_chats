@@ -12,17 +12,17 @@ class Settings(BaseSettings):
     APP_NAME: str = "Telegram Chats"
     DEBUG: bool = os.environ.get('DEBUG', False)
 
-    AUTH_SECRET_KEY: str
-    AUTH_ALGORITHM: str
+    AUTH_SECRET_KEY: str = os.environ.get("AUTH_SECRET_KEY", "...")
+    AUTH_ALGORITHM: str = os.environ.get("AUTH_ALGORITHM", "...")
 
-    ADMIN_USERNAME: str
-    ADMIN_HASHED_PASSWORD: str
+    ADMIN_USERNAME: str = os.environ.get("ADMIN_USERNAME", "username")
+    ADMIN_HASHED_PASSWORD: str = os.environ.get("ADMIN_HASHED_PASSWORD", "password")
 
-    DB_USER: str
-    DB_PASSWORD: str
-    DB_HOST: str
-    DB_PORT: int
-    DB_DATABASE: str
+    DB_USER: str = os.environ.get("DB_USER", "postgres")
+    DB_PASSWORD: str = os.environ.get("DB_PASSWORD", "postgres")
+    DB_HOST: str = os.environ.get("DB_HOST", "localhost")
+    DB_PORT: int = os.environ.get("DB_PORT", "5432")
+    DB_DATABASE: str = os.environ.get("DB_DATABASE", "jobhub")
 
     @property
     def get_asyncpg_url(self):
