@@ -42,7 +42,7 @@ async def add_categories(
     user_auth: UserPublic = Depends(required_auth)
 ) -> list[CategoryResponse]:
     try:
-        return await CategoryService().add_categoris(uow=uow, categoris=categoris)
+        return await CategoryService().add_categories(uow=uow, categories=categoris)
     except Exception as e:
         _logger.error("Exception error", exc_info=True)
         raise HTTPException(

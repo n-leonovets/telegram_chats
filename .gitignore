@@ -254,4 +254,4 @@ $RECYCLE.BIN/
 
 # ----- Windows FINISH ---- #
 
-.vscode
+*.vscode/

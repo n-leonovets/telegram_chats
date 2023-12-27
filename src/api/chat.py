@@ -10,7 +10,7 @@ from src.schemas.user import UserPublic
 from src.services.chat import ChatService
 from src.services.filters.base import LimitFilter
 from src.utils.exception_detail import get_exception_detail
-from src.services.filters.chat import ChatDeleteManyFilter, ChatFilter
+from src.services.filters.chat import ChatFilter
 
 
 router = APIRouter(
@@ -89,7 +89,7 @@ async def update_chat(
 async def update_chats(
     uow: UOWDep,
     chat: ChatUpdate,
-    filters: Annotated[ChatDeleteManyFilter, Depends()],
+    filters: Annotated[ChatFilter, Depends()],
     user_auth: UserPublic = Depends(required_auth)
 ) -> list[ChatResponse]:
     try:
@@ -104,7 +104,7 @@ async def update_chats(
 @router.delete("/")
 async def delete_chats(
     uow: UOWDep,
-    filters: Annotated[ChatDeleteManyFilter, Depends()],
+    filters: Annotated[ChatFilter, Depends()],
     user_auth: UserPublic = Depends(required_auth)
 ) -> None:
     try:

@@ -3,7 +3,7 @@ from typing import Optional
 from src.models.chat import ChatModel
 from src.schemas.chat import ChatResponse, ChatFullResponse, ChatAdd, ChatUpdate
 from src.services.filters.base import LimitFilter
-from src.services.filters.chat import ChatDeleteManyFilter, ChatFilter
+from src.services.filters.chat import ChatFilter
 from src.utils.unitofwork import AbstractUnitOfWork
 
 
@@ -53,7 +53,7 @@ class ChatService:
             return [ChatFullResponse.model_validate(row, from_attributes=True) for row in result]
 
     @staticmethod 
-    async def delete_chats(uow: AbstractUnitOfWork, filters: ChatDeleteManyFilter):
+    async def delete_chats(uow: AbstractUnitOfWork, filters: ChatFilter):
         async with uow:
             await uow.chat.delete_many(filters=filters)
             await uow.commit()

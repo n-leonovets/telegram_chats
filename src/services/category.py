@@ -16,10 +16,10 @@ class CategoryService:
             return CategoryResponse.model_validate(result, from_attributes=True)
 
     @staticmethod
-    async def add_categoris(uow: AbstractUnitOfWork, categoris: list[Category]) -> list[CategoryResponse]:
+    async def add_categories(uow: AbstractUnitOfWork, categories: list[Category]) -> list[CategoryResponse]:
         async with uow:
             result: list[CategoryModel] = await uow.category.create_all(
-                values=[category.model_dump() for category in categoris]
+                values=[category.model_dump() for category in categories]
             )
             await uow.commit()
             return [CategoryResponse.model_validate(row, from_attributes=True) for row in result]
