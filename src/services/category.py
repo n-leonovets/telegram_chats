@@ -1,7 +1,8 @@
 from typing import Optional
 
 from src.models.category import CategoryModel
-from src.schemas.category import CategoryResponse, Category, CategoryFullResponse
+from src.schemas.category import CategoryResponse, Category
+from src.schemas.full.category import CategoryFullResponse
 from src.services.filters.base import LimitFilter
 from src.services.filters.category import CategoryFilter
 from src.utils.unitofwork import AbstractUnitOfWork

@@ -28,13 +28,6 @@ class ChatResponse(BaseModel):
     )
 
 
-class ChatFullResponse(ChatResponse):
-    categories: 'list[CategoryResponse]' = []
-    model_config = SettingsConfigDict(
-        from_attributes=True
-    )
-
-
 class ChatUpdate(BaseModel):
     username: Annotated[str | SkipJsonSchema[None], StringConstraints(max_length=64)] = None
     invite_link: str | SkipJsonSchema[None] = None
@@ -78,7 +71,3 @@ class ChatAdd(BaseModel):
         if self.username is None and self.invite_link is None:
             raise ValueError("username and invite_link can not be both empty")
         return self
-
-
-from src.schemas.category import CategoryResponse
-ChatFullResponse.model_rebuild()

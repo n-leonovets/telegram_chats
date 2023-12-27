@@ -20,14 +20,3 @@ class CategoryResponse(BaseModel):
     model_config = SettingsConfigDict(
         from_attributes=True
     )
-
-
-class CategoryFullResponse(CategoryResponse):
-    chats: 'list[ChatResponse]' = []
-    model_config = SettingsConfigDict(
-        from_attributes=True
-    )
-
-
-from src.schemas.chat import ChatResponse
-CategoryFullResponse.model_rebuild()
