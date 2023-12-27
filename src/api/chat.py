@@ -74,7 +74,7 @@ async def update_partial_chat(
     uow: UOWDep,
     chat_id: int,
     chat: ChatUpdate,
-    # user_auth: UserPublic = Depends(required_auth)
+    user_auth: UserPublic = Depends(required_auth)
 ) -> ChatResponse:
     try:
         return await ChatService().update_chat(uow=uow, chat=chat, filters=ChatFilter(chat_id=chat_id))
@@ -90,7 +90,7 @@ async def update_chat(
     uow: UOWDep,
     chat_id: int,
     chat: ChatUpdate,
-    # user_auth: UserPublic = Depends(required_auth)
+    user_auth: UserPublic = Depends(required_auth)
 ) -> ChatResponse:
     try:
         return await ChatService().update_chat(uow=uow, chat=chat, filters=ChatFilter(chat_id=chat_id), exclude_none=False)
