@@ -1,9 +1,8 @@
 from typing import Optional
 
-from src.models.user import UserModel
-from src.schemas.user import UserPrivate, UserPublic
-from src.services.filters.base import LimitFilter
-from src.services.filters.user import UserFilter
+from src.models import UserModel
+from src.schemas import UserPrivate, UserPublic
+from src.services.filters import LimitFilter, UserFilter
 from src.utils.unitofwork import AbstractUnitOfWork
 
 

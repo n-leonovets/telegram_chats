@@ -3,16 +3,12 @@ from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from src.api import dependencies
 from src.api.auth import required_auth
 from src.api.dependencies import UOWDep
-from src.schemas.chat import ChatResponse, ChatAdd, ChatUpdate
-from src.schemas.full.chat import ChatFullResponse
-from src.schemas.user import UserPublic
-from src.services.chat import ChatService
-from src.services.filters.base import LimitFilter
+from src.schemas import ChatResponse, ChatFullResponse, ChatAdd, ChatUpdate, UserPublic
+from src.services import ChatService
+from src.services.filters import LimitFilter, ChatFilter
 from src.utils.exception_detail import get_exception_detail
-from src.services.filters.chat import ChatFilter
 
 
 router = APIRouter(

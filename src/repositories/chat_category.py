@@ -1,4 +1,4 @@
-from src.models.chat_category import ChatCategoryModel
+from src.models import ChatCategoryModel
 from src.utils.repository import SQLAlchemyRepository
 
 

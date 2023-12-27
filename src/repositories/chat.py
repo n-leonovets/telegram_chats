@@ -1,4 +1,4 @@
-from src.models.chat import ChatModel
+from src.models import ChatModel
 from src.utils.repository import SQLAlchemyRepository
 
 

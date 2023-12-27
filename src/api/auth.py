@@ -7,14 +7,12 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 
 from src.api.dependencies import UOWDep
-from src.enums.auth import TokenType
-from src.schemas.auth import TokensResponse
-from src.schemas.user import UserPublic, UserAdd, UserPrivate
-from src.services.auth import AuthService
-from src.services.filters.user import UserFilter
-from src.services.user import UserService
+from src.enums import TokenType
+from src.schemas import TokensResponse, UserPublic, UserAdd, UserPrivate
+from src.services import AuthService, UserService
+from src.services.filters import UserFilter
 from config import settings
-
+from src.utils.exception_detail import get_exception_detail
 
 _logger = logging.getLogger(__name__)
 router = APIRouter(
@@ -60,20 +58,27 @@ async def login_for_access_token(
     uow: UOWDep,
     form: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> TokensResponse:
-    user = await UserService().get_user(uow, filters=UserFilter(username=form.username))
-    verify_password = AuthService().verify_password(form.password, user.hashed_password)
+    try:
+        user = await UserService().get_user(uow, filters=UserFilter(username=form.username))
+        verify_password = AuthService().verify_password(form.password, user.hashed_password)
 
-    if not user or not verify_password:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
-            headers={"WWW-Authenticate": "Bearer"},
+        if not user or not verify_password:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Incorrect username or password",
+                headers={"WWW-Authenticate": "Bearer"},
+            )
+
+        return TokensResponse(
+            access_token=AuthService().create_access_token(username=form.username),
+            refresh_token=AuthService().create_refresh_token(username=form.username)
         )
-
-    return TokensResponse(
-        access_token=AuthService().create_access_token(username=form.username),
-        refresh_token=AuthService().create_refresh_token(username=form.username)
-    )
+    except Exception as e:
+        _logger.error("Exception error", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=get_exception_detail(e)
+        )
 
 
 @router.post("/refresh_token", response_model=TokensResponse)

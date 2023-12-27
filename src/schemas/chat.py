@@ -28,25 +28,6 @@ class ChatResponse(BaseModel):
     )
 
 
-class ChatUpdate(BaseModel):
-    username: Annotated[str | SkipJsonSchema[None], StringConstraints(max_length=64)] = None
-    invite_link: str | SkipJsonSchema[None] = None
-    members_count: int | SkipJsonSchema[None] = None
-    title: Annotated[str | SkipJsonSchema[None], StringConstraints(max_length=255)] = None
-    description: Annotated[str | SkipJsonSchema[None], StringConstraints(max_length=255)] = None
-    is_verified: bool | SkipJsonSchema[None] = None
-    is_restricted: bool | SkipJsonSchema[None] = None
-    is_scam: bool | SkipJsonSchema[None] = None
-    is_fake: bool | SkipJsonSchema[None] = None
-    is_forum: bool | SkipJsonSchema[None] = None
-    is_moderated: bool | SkipJsonSchema[None] = None
-    is_closed: bool | SkipJsonSchema[None] = None
-
-    model_config = SettingsConfigDict(
-        from_attributes=True
-    )
-
-
 class ChatAdd(BaseModel):
     id: int
     username: str | SkipJsonSchema[None] = None
@@ -71,3 +52,22 @@ class ChatAdd(BaseModel):
         if self.username is None and self.invite_link is None:
             raise ValueError("username and invite_link can not be both empty")
         return self
+
+
+class ChatUpdate(BaseModel):
+    username: Annotated[str | SkipJsonSchema[None], StringConstraints(max_length=64)] = None
+    invite_link: str | SkipJsonSchema[None] = None
+    members_count: int | SkipJsonSchema[None] = None
+    title: Annotated[str | SkipJsonSchema[None], StringConstraints(max_length=255)] = None
+    description: Annotated[str | SkipJsonSchema[None], StringConstraints(max_length=255)] = None
+    is_verified: bool | SkipJsonSchema[None] = None
+    is_restricted: bool | SkipJsonSchema[None] = None
+    is_scam: bool | SkipJsonSchema[None] = None
+    is_fake: bool | SkipJsonSchema[None] = None
+    is_forum: bool | SkipJsonSchema[None] = None
+    is_moderated: bool | SkipJsonSchema[None] = None
+    is_closed: bool | SkipJsonSchema[None] = None
+
+    model_config = SettingsConfigDict(
+        from_attributes=True
+    )

@@ -5,12 +5,9 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.api.auth import required_auth
 from src.api.dependencies import UOWDep
-from src.schemas.category import Category, CategoryResponse
-from src.schemas.full.category import CategoryFullResponse
-from src.schemas.user import UserPublic
-from src.services.category import CategoryService
-from src.services.filters.base import LimitFilter
-from src.services.filters.category import CategoryFilter
+from src.schemas import Category, CategoryResponse, CategoryFullResponse, UserPublic
+from src.services import CategoryService
+from src.services.filters import LimitFilter, CategoryFilter
 from src.utils.exception_detail import get_exception_detail
 
 router = APIRouter(

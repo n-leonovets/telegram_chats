@@ -4,7 +4,7 @@ from jose import jwt
 from passlib.context import CryptContext
 
 from config import settings
-from src.enums.auth import TokenType
+from src.enums import TokenType
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 

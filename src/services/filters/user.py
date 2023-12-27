@@ -1,10 +1,10 @@
 from dataclasses import dataclass
-from typing import Annotated, Any, Union
+from typing import Any, Union
 
 from pydantic.json_schema import SkipJsonSchema
 from sqlalchemy import Select, Update, Delete
 
-from src.models.user import UserModel
+from src.models import UserModel
 from src.utils.filters import AbstractFilter
 
 

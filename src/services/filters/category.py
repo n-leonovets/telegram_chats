@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from pydantic.json_schema import SkipJsonSchema
 from sqlalchemy import Select
 
-from src.models.category import CategoryModel
+from src.models import CategoryModel
 from src.utils.filters import AbstractFilter
 
 

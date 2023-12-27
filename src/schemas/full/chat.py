@@ -1,7 +1,6 @@
 from pydantic_settings import SettingsConfigDict
 
-from src.schemas.category import CategoryResponse
-from src.schemas.chat import ChatResponse
+from src.schemas import ChatResponse, CategoryResponse
 
 
 class ChatFullResponse(ChatResponse):
