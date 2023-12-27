@@ -115,7 +115,7 @@ async def get_new_token(
     )
 
 
-@router_secure.post("/register_user")
+@router.post("/register_user")
 async def register_user(
     uow: UOWDep,
     user: UserAdd = Depends(),
