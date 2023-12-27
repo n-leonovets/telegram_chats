@@ -5,24 +5,24 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.api.auth import required_auth
 from src.api.dependencies import UOWDep
-from src.schemas import ChatResponse, ChatFullResponse, ChatAdd, ChatUpdate, UserPublic
+from src.schemas import ChatResponse, ChatFullResponse, ChatAdd, ChatUpdate
 from src.services import ChatService
 from src.services.filters import LimitFilter, ChatFilter
 from src.utils.exception_detail import get_exception_detail
 
 
-router = APIRouter(
+router_secure = APIRouter(
     prefix="/chats",
-    tags=["Chats"]
+    tags=["Chats"],
+    dependencies=[Depends(required_auth)]
 )
 _logger = logging.getLogger(__name__)
 
 
-@router.post("/chat/")
+@router_secure.post("/chat/")
 async def add_chat(
     uow: UOWDep,
-    chat: ChatAdd,
-    user_auth: UserPublic = Depends(required_auth)
+    chat: ChatAdd
 ) -> ChatResponse:
     try:
         return await ChatService().add_chat(uow=uow, chat=chat)
@@ -34,11 +34,10 @@ async def add_chat(
         )
 
 
-@router.post("/")
+@router_secure.post("/")
 async def add_chats(
     uow: UOWDep,
-    chats: list[ChatAdd],
-    user_auth: UserPublic = Depends(required_auth)
+    chats: list[ChatAdd]
 ) -> list[ChatResponse]:
     try:
         return await ChatService().add_chats(uow=uow, chats=chats)
@@ -50,12 +49,11 @@ async def add_chats(
         )
 
 
-@router.get("/")
+@router_secure.get("/")
 async def get_chats(
     uow: UOWDep,
     filters: Annotated[ChatFilter, Depends()],
-    limits: Annotated[LimitFilter, Depends()],
-    user_auth: UserPublic = Depends(required_auth)
+    limits: Annotated[LimitFilter, Depends()]
 ) -> list[ChatFullResponse]:
     try:
         return await ChatService().get_chats(uow=uow, filters=filters, limits=limits)
@@ -67,12 +65,11 @@ async def get_chats(
         )
 
 
-@router.patch("/{chat_id}")
+@router_secure.patch("/{chat_id}")
 async def update_chat(
     uow: UOWDep,
     chat_id: int,
-    chat: ChatUpdate,
-    user_auth: UserPublic = Depends(required_auth)
+    chat: ChatUpdate
 ) -> ChatResponse:
     try:
         return await ChatService().update_chat(uow=uow, chat=chat, filters=ChatFilter(chat_id=chat_id))
@@ -84,11 +81,10 @@ async def update_chat(
         )
 
 
-@router.delete("/{chat_id}")
+@router_secure.delete("/{chat_id}")
 async def delete_chat(
     uow: UOWDep,
-    chat_id: int,
-    user_auth: UserPublic = Depends(required_auth)
+    chat_id: int
 ) -> ChatResponse:
     try:
         return await ChatService().delete_chat(uow=uow, filters=ChatFilter(chat_id=chat_id))

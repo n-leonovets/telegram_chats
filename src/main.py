@@ -4,12 +4,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from config import settings
-from src.api.auth import router as auth_router
-from src.api.category import router as category_router
-from src.api.chat import router as chat_router
-from src.api.chat_category import router as chat_category_router
+from src.api import auth, category, chat, chat_category
 from src.middleware import LogStatsMiddleware
 from src.utils.asyncio_utils import asyncio_speedup
+
 
 _logger = logging.getLogger(__name__)
 
@@ -45,7 +43,13 @@ app.add_middleware(
     ],
 )
 
-app.include_router(auth_router)
-app.include_router(category_router)
-app.include_router(chat_router)
-app.include_router(chat_category_router)
+app.include_router(auth.router)
+app.include_router(category.router_secure)
+app.include_router(chat.router_secure)
+app.include_router(chat_category.router_secure)
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run("src.main:app", reload=True)

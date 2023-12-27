@@ -10,18 +10,18 @@ from src.services import ChatCategoryService
 from src.services.filters import LimitFilter, ChatCategoryFilter
 from src.utils.exception_detail import get_exception_detail
 
-router = APIRouter(
-    prefix="/chat_categories",
-    tags=["Chat Categories"]
+router_secure = APIRouter(
+    prefix="/chats_categories",
+    tags=["Chat Categories"],
+    dependencies=[Depends(required_auth)]
 )
 _logger = logging.getLogger(__name__)
 
 
-@router.post("/chat_category/")
+@router_secure.post("/chat_category/")
 async def add_chat_category(
     uow: UOWDep,
-    chat_category: ChatCategory,
-    user_auth: UserPublic = Depends(required_auth)
+    chat_category: ChatCategory
 ) -> ChatCategoryResponse:
     try:
         return await ChatCategoryService().add_chat_category(uow=uow, chat_category=chat_category)
@@ -33,11 +33,10 @@ async def add_chat_category(
         )
 
 
-@router.post("/")
+@router_secure.post("/")
 async def add_chat_categories(
     uow: UOWDep,
-    chat_categories: list[ChatCategory],
-    user_auth: UserPublic = Depends(required_auth)
+    chat_categories: list[ChatCategory]
 ) -> list[ChatCategoryResponse]:
     try:
         return await ChatCategoryService().add_chat_categories(uow=uow, chat_categories=chat_categories)
@@ -49,12 +48,11 @@ async def add_chat_categories(
         )
 
 
-@router.get("/")
+@router_secure.get("/")
 async def get_chat_categories(
     uow: UOWDep,
     filters: Annotated[ChatCategoryFilter, Depends()],
-    limits: Annotated[LimitFilter, Depends()],
-    user_auth: UserPublic = Depends(required_auth)
+    limits: Annotated[LimitFilter, Depends()]
 ) -> list[ChatCategoryResponse]:
     try:
         return await ChatCategoryService().get_chat_categories(uow=uow, filters=filters, limits=limits)
@@ -66,12 +64,11 @@ async def get_chat_categories(
         )
 
 
-@router.patch("/{chat_id}/{category_id}")
+@router_secure.patch("/{chat_id}/{category_id}")
 async def update_chat_category(
     uow: UOWDep,
     chat_id: int,
-    category_id: int,
-    user_auth: UserPublic = Depends(required_auth)
+    category_id: int
 ) -> ChatCategoryResponse:
     try:
         return await ChatCategoryService().update_chat_category(
@@ -93,12 +90,11 @@ async def update_chat_category(
         )
 
 
-@router.delete("/{chat_id}/{category_id}")
+@router_secure.delete("/{chat_id}/{category_id}")
 async def delete_category(
     uow: UOWDep,
     chat_id: int,
-    category_id: int,
-    user_auth: UserPublic = Depends(required_auth)
+    category_id: int
 ) -> ChatCategoryResponse:
     try:
         return await ChatCategoryService().delete_chat_category(

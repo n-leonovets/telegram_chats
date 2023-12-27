@@ -5,23 +5,25 @@ from fastapi import APIRouter, Depends, HTTPException, status
 
 from src.api.auth import required_auth
 from src.api.dependencies import UOWDep
-from src.schemas import Category, CategoryResponse, CategoryFullResponse, UserPublic
+from src.schemas import Category, CategoryResponse, CategoryFullResponse
 from src.services import CategoryService
 from src.services.filters import LimitFilter, CategoryFilter
 from src.utils.exception_detail import get_exception_detail
 
-router = APIRouter(
+
+router_secure = APIRouter(
     prefix="/categories",
-    tags=["Categories"]
+    tags=["Categories"],
+    dependencies=[Depends(required_auth)]
 )
+
 _logger = logging.getLogger(__name__)
 
 
-@router.post("/category/")
+@router_secure.post("/category/")
 async def add_category(
     uow: UOWDep,
-    category: Category,
-    user_auth: UserPublic = Depends(required_auth)
+    category: Category
 ) -> CategoryResponse:
     try:
         return await CategoryService().add_category(uow=uow, category=category)
@@ -33,11 +35,10 @@ async def add_category(
         )
 
 
-@router.post("/")
+@router_secure.post("/")
 async def add_categories(
     uow: UOWDep,
-    categoris: list[Category],
-    user_auth: UserPublic = Depends(required_auth)
+    categoris: list[Category]
 ) -> list[CategoryResponse]:
     try:
         return await CategoryService().add_categoris(uow=uow, categoris=categoris)
@@ -49,12 +50,11 @@ async def add_categories(
         )
 
 
-@router.get("/")
+@router_secure.get("/")
 async def get_categories(
     uow: UOWDep,
     filters: Annotated[CategoryFilter, Depends()],
-    limits: Annotated[LimitFilter, Depends()],
-    user_auth: UserPublic = Depends(required_auth)
+    limits: Annotated[LimitFilter, Depends()]
 ) -> list[CategoryFullResponse]:
     try:
         return await CategoryService().get_categories(uow=uow, filters=filters, limits=limits)
@@ -66,12 +66,11 @@ async def get_categories(
         )
 
 
-@router.patch("/{category_id}")
+@router_secure.patch("/{category_id}")
 async def update_category(
     uow: UOWDep,
     category_id: int,
-    category: Category,
-    user_auth: UserPublic = Depends(required_auth)
+    category: Category
 ) -> CategoryResponse:
     try:
         return await CategoryService().update_category(
@@ -85,11 +84,10 @@ async def update_category(
         )
 
 
-@router.delete("/{category_id}")
+@router_secure.delete("/{category_id}")
 async def delete_category(
     uow: UOWDep,
-    category_id: int,
-    user_auth: UserPublic = Depends(required_auth)
+    category_id: int
 ) -> CategoryResponse:
     try:
         return await CategoryService().delete_category(uow=uow, filters=CategoryFilter(id=category_id))
