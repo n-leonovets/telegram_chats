@@ -43,7 +43,7 @@ class CategoryService:
     async def update_category(uow: AbstractUnitOfWork, category: Category, filters: CategoryFilter) -> CategoryResponse:
         async with uow:
             result: CategoryModel = await uow.category.update_one(
-                values=category.model_dump(exclude_none=True),
+                values=category.model_dump(exclude_unset=True),
                 filters=filters
             )
             await uow.commit()

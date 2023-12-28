@@ -44,7 +44,7 @@ class UserService:
     ) -> UserPublic:
         async with uow:
             result: UserModel = await uow.user.update_one(
-                values=user.model_dump(),
+                values=user.model_dump(exclude_unset=True),
                 filters=filters
             )
             return UserPublic.model_validate(result, from_attributes=True)

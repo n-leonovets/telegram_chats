@@ -35,7 +35,7 @@ class ChatService:
     async def update_chat(uow: AbstractUnitOfWork, chat: ChatUpdate, filters: ChatFilter) -> ChatResponse:
         async with uow:
             result: ChatModel = await uow.chat.update_one(
-                values=chat.model_dump(exclude_none=True),
+                values=chat.model_dump(exclude_unset=True),
                 filters=filters
             )
             await uow.commit()

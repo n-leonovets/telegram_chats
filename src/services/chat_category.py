@@ -46,7 +46,7 @@ class ChatCategoryService:
     ) -> ChatCategoryResponse:
         async with uow:
             result: ChatCategory = await uow.chat_category.update_one(
-                values=chat_category.model_dump(exclude_none=True),
+                values=chat_category.model_dump(exclude_unset=True),
                 filters=filters
             )
             await uow.commit()
