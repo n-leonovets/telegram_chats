@@ -27,16 +27,6 @@ class UserService:
             return UserPrivate.model_validate(result, from_attributes=True)
 
     @staticmethod
-    async def get_users(
-        uow: AbstractUnitOfWork,
-        filters: Optional[UserFilter] = None,
-        limits: Optional[LimitFilter] = None
-    ) -> list[UserPublic]:
-        async with uow:
-            result: list[UserModel] = await uow.user.read_all(filters=filters, limits=limits)
-            return [UserPublic.model_validate(user, from_attributes=True) for user in result]
-
-    @staticmethod
     async def update_user(
         uow: AbstractUnitOfWork,
         user: UserPublic,
@@ -57,3 +47,18 @@ class UserService:
         async with uow:
             result: UserModel = await uow.user.delete_one(filters=filters)
             return UserPublic.model_validate(result, from_attributes=True)
+
+    @staticmethod
+    async def get_users(
+        uow: AbstractUnitOfWork,
+        filters: Optional[UserFilter] = None,
+        limits: Optional[LimitFilter] = None
+    ) -> list[UserPublic]:
+        async with uow:
+            result: list[UserModel] = await uow.user.read_many(filters=filters, limits=limits)
+            return [
+                UserPublic.model_validate(
+                    user,
+                    from_attributes=True
+                ) for user in result
+            ]

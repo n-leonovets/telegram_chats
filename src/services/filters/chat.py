@@ -1,18 +1,17 @@
 import datetime
-from dataclasses import dataclass
-from typing import Annotated
+from typing import Annotated, Union
 
 from fastapi import Query
+from pydantic import BaseModel
 from pydantic.json_schema import SkipJsonSchema
-from sqlalchemy import Select, or_
+from sqlalchemy import Select, or_, Update, Delete, and_
 
 from src.models import ChatModel
 from src.utils.filters import AbstractFilter
 
 
-@dataclass
-class ChatFilter(AbstractFilter):
-    chat_id: int | SkipJsonSchema[None] = None
+class ChatFilter(BaseModel, AbstractFilter):
+    id: int | SkipJsonSchema[None] = None
     username: str | SkipJsonSchema[None] = None
     invite_link: str | SkipJsonSchema[None] = None
     members_count_more: int | SkipJsonSchema[None] = None
@@ -29,49 +28,64 @@ class ChatFilter(AbstractFilter):
     updated_after: datetime.datetime | SkipJsonSchema[None] = None
     updated_to: datetime.datetime | SkipJsonSchema[None] = None
 
-    def apply(self, query: Select) -> Select:
-        if self.chat_id is not None:
-            query = query.where(ChatModel.id == self.chat_id)
-        if self.username is not None:
-            query = query.where(ChatModel.username == self.username)
-        if self.invite_link is not None:
-            query = query.where(ChatModel.invite_link == self.invite_link)
+    def get_conditions(self) -> list:
+        filters = self.model_dump(exclude_unset=True)
+        conditions = []
 
-        if self.members_count_more is not None:
-            query = query.where(ChatModel.members_count > self.members_count_more)
-        if self.members_count_less is not None:
-            query = query.where(ChatModel.members_count < self.members_count_less)
+        if "id" in filters:
+            conditions.append(ChatModel.id == filters["id"])
+        if "username" in filters:
+            conditions.append(ChatModel.username == filters["username"])
+        if "invite_link" in filters:
+            conditions.append(ChatModel.invite_link == filters["invite_link"])
 
-        if self.keywords_in_title is not None:
+        if "members_count_more" in filters:
+            conditions.append(ChatModel.members_count > filters["members_count_more"])
+        if "members_count_less" in filters:
+            conditions.append(ChatModel.members_count < filters["members_count_less"])
+
+        if "keywords_in_title" in filters:
             title_conditions = [
                 ChatModel.title.ilike(f"%{search_string}%") for search_string in self.keywords_in_title
             ]
-            query = query.where(or_(*title_conditions))
+            conditions.append(or_(*title_conditions))
 
-        if self.keywords_in_description is not None:
+        if "keywords_in_description" in filters:
             description_conditions = [
                 ChatModel.title.ilike(f"%{search_string}%") for search_string in self.keywords_in_description
             ]
-            query = query.where(or_(*description_conditions))
+            conditions.append(or_(*description_conditions))
 
-        if self.is_verified is not None:
-            query = query.where(ChatModel.is_verified == self.is_verified)
-        if self.is_restricted is not None:
-            query = query.where(ChatModel.is_restricted == self.is_restricted)
-        if self.is_scam is not None:
-            query = query.where(ChatModel.is_scam == self.is_scam)
-        if self.is_fake is not None:
-            query = query.where(ChatModel.is_fake == self.is_fake)
-        if self.is_forum is not None:
-            query = query.where(ChatModel.is_forum == self.is_forum)
-        if self.is_moderated is not None:
-            query = query.where(ChatModel.is_moderated == self.is_moderated)
-        if self.is_closed is not None:
-            query = query.where(ChatModel.is_closed == self.is_closed)
+        if "is_verified" in filters:
+            conditions.append(ChatModel.is_verified == filters["is_verified"])
+        if "is_restricted" in filters:
+            conditions.append(ChatModel.is_restricted == filters["is_restricted"])
+        if "is_scam" in filters:
+            conditions.append(ChatModel.is_scam == filters["is_scam"])
+        if "is_fake" in filters:
+            conditions.append(ChatModel.is_fake == filters["is_fake"])
+        if "is_forum" in filters:
+            conditions.append(ChatModel.is_forum == filters["is_forum"])
+        if "is_moderated" in filters:
+            conditions.append(ChatModel.is_moderated == filters["is_moderated"])
+        if "is_closed" in filters:
+            conditions.append(ChatModel.is_closed == filters["is_closed"])
 
-        if self.updated_after is not None:
-            query = query.where(ChatModel.updated_at > self.updated_after)
-        if self.updated_to is not None:
-            query = query.where(ChatModel.updated_at < self.updated_to)
+        if "updated_after" in filters:
+            conditions.append(ChatModel.updated_at > filters["updated_after"])
+        if "updated_to" in filters:
+            conditions.append(ChatModel.updated_at < filters["updated_to"])
 
-        return query
+        return conditions
+
+    def apply(self, query: Union[Select, Update, Delete]) -> Union[Select, Update, Delete]:
+        conditions = self.get_conditions()
+        return query.where(and_(*conditions))
+
+
+class ChatListFilter(BaseModel, AbstractFilter):
+    filters: list[ChatFilter]
+
+    def apply(self, query: Union[Select, Update, Delete]) -> Union[Select, Update, Delete]:
+        conditions = [and_(*f.get_conditions()) for f in self.filters]
+        return query.where(or_(*conditions))

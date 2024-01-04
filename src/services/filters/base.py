@@ -1,13 +1,11 @@
-from dataclasses import dataclass
-
+from pydantic import BaseModel
 from pydantic.json_schema import SkipJsonSchema
 from sqlalchemy import Select
 
 from src.utils.filters import AbstractFilter
 
 
-@dataclass
-class LimitFilter(AbstractFilter):
+class LimitFilter(AbstractFilter, BaseModel):
     limit: int | SkipJsonSchema[None] = None
     offset: int | SkipJsonSchema[None] = None
 
